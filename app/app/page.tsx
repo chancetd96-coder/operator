@@ -7,7 +7,7 @@ import {
   getHighestPriorityMission,
   getCriticalMissions,
 } from "@/lib/mission-engine";
-
+import CommanderBrief from "@/components/CommanderBrief";
 import { useEffect, useState } from "react";
 import {
   loadMissions,
@@ -280,7 +280,7 @@ if (!hydrated) {
               </p>
 
             </div>
-
+<CommanderBrief missions={missions} />
 <DailyBriefing
   missionCount={missionCount}
   priorityMission={priorityMission?.title ?? null}
