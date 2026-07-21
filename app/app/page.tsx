@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   getMissionCount,
   getOverallProgress,
@@ -21,7 +22,7 @@ import type { Mission } from "@/types/mission";
 import Panel from "@/components/panel";
 import DailyBriefing from "@/components/DailyBriefing";
 import MissionInput from "@/components/MissionInput";
-export default function Home() {
+export default function Home() {const router = useRouter();
   
  const [mission, setMission] = useState("");
  const [missions, setMissions] = useState<Mission[]>([]);
@@ -217,7 +218,10 @@ if (!hydrated) {
 
                 key={item.id}
 
-                onClick={() => setSelectedMission(item)}
+                onClick={() => {
+                  setSelectedMission(item);
+                  router.push(`/missions/${item.id}`);
+                 }}
 
                 className={`w-full rounded-xl border p-4 text-left transition ${
                   selectedMission?.id === item.id

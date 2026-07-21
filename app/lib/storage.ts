@@ -191,3 +191,16 @@ export function saveSelectedMissionId(
     String(id),
   );
 }
+export function updateStoredMission(
+  updatedMission: Mission,
+): void {
+  const missions = loadMissions();
+
+  const updatedMissions = missions.map((mission) =>
+    mission.id === updatedMission.id
+      ? updatedMission
+      : mission,
+  );
+
+  saveMissions(updatedMissions);
+}
