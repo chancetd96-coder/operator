@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useParams, useRouter } from "next/navigation";
 
+import MissionTimeline from "@/components/MissionTimeline";
 import {
   loadMissions,
   saveMissions,
@@ -647,6 +648,8 @@ useEffect(() => {
             </section>
           </aside>
         </div>
+
+        <MissionTimeline mission={mission} />
       </div>
     </main>
   );
