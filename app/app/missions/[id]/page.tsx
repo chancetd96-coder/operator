@@ -7,10 +7,15 @@ import {
   useState,
 } from "react";
 import { useParams, useRouter } from "next/navigation";
-
+import MissionMemoryPanel from "@/components/MissionMemoryPanel";
 import MissionTimeline from "@/components/MissionTimeline";
 import { MissionRepository } from "@/lib/repositories/missionRepository";
 import { saveSelectedMissionId } from "@/lib/storage";
+
+import WorkspaceTabs, {
+  type WorkspaceTab,
+} from "@/components/workspace/WorkspaceTabs";
+
 import type {
   Mission,
   MissionTask,
@@ -52,7 +57,8 @@ async function persistMission(
 export default function MissionWorkspacePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-
+const [activeTab, setActiveTab] =
+  useState<WorkspaceTab>("overview");
   const [mission, setMission] = useState<Mission | null>(
     null,
   );
@@ -364,7 +370,21 @@ useEffect(() => {
                   }}
                 />
               </div>
+<WorkspaceTabs
+  activeTab={activeTab}
+  onChange={setActiveTab}
+/>
+{activeTab === "documents" ? (
+  <section className="mt-6 rounded-2xl border border-dashed border-white/10 p-8 text-sm text-white/40">
+    Documents workspace coming next.
+  </section>
+) : null}
 
+{activeTab === "commander" ? (
+  <section className="mt-6 rounded-2xl border border-dashed border-white/10 p-8 text-sm text-white/40">
+    Commander workspace coming next.
+  </section>
+) : null}
               <div className="mt-4 flex justify-between text-xs text-white/40">
                 <span>
                   {completedTaskCount} complete
@@ -675,8 +695,13 @@ useEffect(() => {
             </section>
           </aside>
         </div>
+       {activeTab === "memory" ? (
+  <MissionMemoryPanel missionId={mission.id} />
+) : null}
 
-        <MissionTimeline mission={mission} />
+{activeTab === "timeline" ? (
+  <MissionTimeline mission={mission} />
+) : null}
       </div>
     </main>
   );
