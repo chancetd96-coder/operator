@@ -10,13 +10,11 @@ import {
 import CommanderBrief from "@/components/CommanderBrief";
 import { useEffect, useState } from "react";
 import {
-  loadMissions,
   loadSelectedMissionId,
-  saveMissions,
   saveSelectedMissionId,
 } from "@/lib/storage";
 
-
+import { MissionRepository } from "@/lib/repositories/missionRepository";
 import type { Mission } from "@/types/mission";
 
 import Panel from "@/components/panel";
@@ -32,26 +30,22 @@ export default function Home() {const router = useRouter();
  const [hydrated, setHydrated] = useState(false);
 
 useEffect(() => {
-  const storedMissions = loadMissions();
-  const selectedId = loadSelectedMissionId();
+  async function hydrate() {
+    const cloudMissions = await MissionRepository.getAll();
+    const selectedId = loadSelectedMissionId();
 
-  const selected =
-    storedMissions.find((item) => item.id === selectedId) ??
-    storedMissions[0] ??
-    null;
+    const selected =
+      cloudMissions.find((item) => item.id === selectedId) ??
+      cloudMissions[0] ??
+      null;
 
-  // This effect intentionally hydrates browser-only persisted state.
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  setMissions(storedMissions);
-  setSelectedMission(selected);
-  setHydrated(true);
+    setMissions(cloudMissions);
+    setSelectedMission(selected);
+    setHydrated(true);
+  }
+
+  void hydrate();
 }, []);
-
-useEffect(() => {
-  if (!hydrated) return;
-
-  saveMissions(missions);
-}, [missions, hydrated]);
 
 useEffect(() => {
   if (!hydrated) return;
@@ -130,11 +124,10 @@ useEffect(() => {
   resources: data.plan.resources,
   successMetrics: data.plan.successMetrics,
 };
+await MissionRepository.save(newMission);
+const cloudMissions = await MissionRepository.getAll();
 
-    setMissions((currentMissions) => [
-      newMission,
-      ...currentMissions,
-    ]);
+setMissions(cloudMissions);
 
     setSelectedMission(newMission);
     setMission("");

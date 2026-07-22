@@ -9,11 +9,8 @@ import {
 import { useParams, useRouter } from "next/navigation";
 
 import MissionTimeline from "@/components/MissionTimeline";
-import {
-  loadMissions,
-  saveMissions,
-  saveSelectedMissionId,
-} from "@/lib/storage";
+import { MissionRepository } from "@/lib/repositories/missionRepository";
+import { saveSelectedMissionId } from "@/lib/storage";
 import type {
   Mission,
   MissionTask,
@@ -40,18 +37,11 @@ function calculateMissionProgress(
   return Math.round(totalProgress / tasks.length);
 }
 
-function persistMission(
+async function persistMission(
   currentMission: Mission,
-): void {
-  const missions = loadMissions();
+): Promise<void> {
+  await MissionRepository.save(currentMission);
 
-  const updatedMissions = missions.map((item) =>
-    item.id === currentMission.id
-      ? currentMission
-      : item,
-  );
-
-  saveMissions(updatedMissions);
   saveSelectedMissionId(currentMission.id);
 
   window.dispatchEvent(
@@ -74,26 +64,46 @@ const [lastSavedAt, setLastSavedAt] =
   useState<Date | null>(null);
 
 const hasLoadedMission = useRef(false);
+const saveQueueRef = useRef<Promise<void>>(
+  Promise.resolve(),
+);
   const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
+  let active = true;
+
+  async function hydrateMission() {
     const missionId = Number(params.id);
-    const missions = loadMissions();
+
+    if (Number.isNaN(missionId)) {
+      if (active) {
+        setMission(null);
+        setHydrated(true);
+      }
+
+      return;
+    }
 
     const storedMission =
-      missions.find((item) => item.id === missionId) ??
-      null;
+      await MissionRepository.getById(missionId);
 
-    // Browser-persisted state is intentionally loaded here.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-setMission(storedMission);
+    if (!active) return;
 
-if (storedMission) {
-  hasLoadedMission.current = true;
-  saveSelectedMissionId(storedMission.id);
-}
+    setMission(storedMission);
 
-setHydrated(true);
+    if (storedMission) {
+      hasLoadedMission.current = true;
+      saveSelectedMissionId(storedMission.id);
+    }
+
+    setHydrated(true);
+  }
+
+  void hydrateMission();
+
+  return () => {
+    active = false;
+  };
 }, [params.id]);
 
 useEffect(() => {
@@ -101,20 +111,37 @@ useEffect(() => {
     return;
   }
 
+  let active = true;
+
   setSaveStatus("saving");
 
+  const missionSnapshot = mission;
+
   const timeout = window.setTimeout(() => {
-    try {
-      persistMission(mission);
-      setSaveStatus("saved");
-      setLastSavedAt(new Date());
-    } catch (error) {
-      console.error("Mission auto-save failed:", error);
-      setSaveStatus("error");
-    }
+    const saveOperation = saveQueueRef.current
+      .catch(() => undefined)
+      .then(() => persistMission(missionSnapshot));
+
+    saveQueueRef.current = saveOperation;
+
+    void saveOperation
+      .then(() => {
+        if (!active) return;
+
+        setSaveStatus("saved");
+        setLastSavedAt(new Date());
+      })
+      .catch((error) => {
+        console.error("Mission auto-save failed:", error);
+
+        if (!active) return;
+
+        setSaveStatus("error");
+      });
   }, 650);
 
   return () => {
+    active = false;
     window.clearTimeout(timeout);
   };
 }, [mission]);
