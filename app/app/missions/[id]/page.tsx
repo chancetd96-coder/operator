@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import {
@@ -8,7 +13,6 @@ import {
   saveMissions,
   saveSelectedMissionId,
 } from "@/lib/storage";
-
 import type {
   Mission,
   MissionTask,
@@ -35,6 +39,25 @@ function calculateMissionProgress(
   return Math.round(totalProgress / tasks.length);
 }
 
+function persistMission(
+  currentMission: Mission,
+): void {
+  const missions = loadMissions();
+
+  const updatedMissions = missions.map((item) =>
+    item.id === currentMission.id
+      ? currentMission
+      : item,
+  );
+
+  saveMissions(updatedMissions);
+  saveSelectedMissionId(currentMission.id);
+
+  window.dispatchEvent(
+    new Event("operator:missions-updated"),
+  );
+}
+
 export default function MissionWorkspacePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -42,8 +65,15 @@ export default function MissionWorkspacePage() {
   const [mission, setMission] = useState<Mission | null>(
     null,
   );
+  const [saveStatus, setSaveStatus] = useState<
+  "idle" | "saving" | "saved" | "error"
+>("idle");
+
+const [lastSavedAt, setLastSavedAt] =
+  useState<Date | null>(null);
+
+const hasLoadedMission = useRef(false);
   const [hydrated, setHydrated] = useState(false);
-  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     const missionId = Number(params.id);
@@ -55,13 +85,39 @@ export default function MissionWorkspacePage() {
 
     // Browser-persisted state is intentionally loaded here.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMission(storedMission);
-    setHydrated(true);
+setMission(storedMission);
 
-    if (storedMission) {
-      saveSelectedMissionId(storedMission.id);
+if (storedMission) {
+  hasLoadedMission.current = true;
+  saveSelectedMissionId(storedMission.id);
+}
+
+setHydrated(true);
+}, [params.id]);
+
+useEffect(() => {
+  if (!mission || !hasLoadedMission.current) {
+    return;
+  }
+
+  setSaveStatus("saving");
+
+  const timeout = window.setTimeout(() => {
+    try {
+      persistMission(mission);
+      setSaveStatus("saved");
+      setLastSavedAt(new Date());
+    } catch (error) {
+      console.error("Mission auto-save failed:", error);
+      setSaveStatus("error");
     }
-  }, [params.id]);
+  }, 650);
+
+  return () => {
+    window.clearTimeout(timeout);
+  };
+}, [mission]);
+
 
   const completedTaskCount = useMemo(() => {
     return (
@@ -83,7 +139,6 @@ export default function MissionWorkspacePage() {
       };
     });
 
-    setSaved(false);
   }
 
   function updateTask(
@@ -128,26 +183,8 @@ export default function MissionWorkspacePage() {
       };
     });
 
-    setSaved(false);
   }
 
-  function saveMission(): void {
-    if (!mission) return;
-
-    const missions = loadMissions();
-
-    const updatedMissions = missions.map((item) =>
-      item.id === mission.id ? mission : item,
-    );
-
-    saveMissions(updatedMissions);
-    saveSelectedMissionId(mission.id);
-    setSaved(true);
-
-    window.setTimeout(() => {
-      setSaved(false);
-    }, 2000);
-  }
 
   if (!hydrated) {
     return (
@@ -200,22 +237,53 @@ export default function MissionWorkspacePage() {
             ← Mission Control
           </button>
 
-          <div className="flex items-center gap-3">
-            {saved && (
-              <span className="text-xs tracking-[0.2em] text-emerald-400">
-                SAVED
-              </span>
-            )}
+<div className="flex items-center gap-3">
+  <span
+    className={`text-xs tracking-[0.2em] ${
+      saveStatus === "error"
+        ? "text-red-300"
+        : saveStatus === "saving"
+          ? "text-cyan-300/70"
+          : "text-emerald-300/70"
+    }`}
+  >
+    {saveStatus === "saving" && "SAVING"}
 
-            <button
-              type="button"
-              onClick={saveMission}
-              className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white/85"
-            >
-              Save Mission
-            </button>
-          </div>
-        </div>
+    {saveStatus === "saved" &&
+      `SAVED${
+        lastSavedAt
+          ? ` ${lastSavedAt.toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "2-digit",
+            })}`
+          : ""
+      }`}
+
+    {saveStatus === "error" && "SAVE FAILED"}
+
+    {saveStatus === "idle" && "AUTO-SAVE ACTIVE"}
+  </span>
+
+  <button
+    type="button"
+    onClick={() => {
+      try {
+        persistMission(mission);
+        setSaveStatus("saved");
+        setLastSavedAt(new Date());
+      } catch (error) {
+        console.error(
+          "Mission save failed:",
+          error,
+        );
+        setSaveStatus("error");
+      }
+    }}
+    className="rounded-xl border border-white/15 bg-white/[0.06] px-4 py-2.5 text-sm text-white/60 transition hover:bg-white/10 hover:text-white"
+  >
+    Save now
+  </button>
+</div>        </div>
       </header>
 
       <div className="mx-auto max-w-7xl px-6 py-8 md:py-12">
