@@ -1,24 +1,64 @@
+import Page from "@/components/layout/Page";
+import Hero from "@/components/layout/Hero";
+import HighestLeverageCard from "@/components/layout/HighestLeverageCard";
+import SituationGrid from "@/components/layout/SituationGrid";
+import CommanderPanel from "@/components/layout/CommanderPanel";
+import FooterStats from "@/components/layout/FooterStats";
+
+const today = {
+  greeting: "Good Morning",
+  user: "Chance",
+  confidence: 91,
+  status: "ON TRACK",
+  highestAction: "Finish Defense Unicorns Interview Prep",
+  duration: "1h 20m",
+  impact: "+7% Execution Confidence",
+
+  commander: {
+    situation: "Interview preparation remains the highest-value activity today.",
+    assessment:
+      "Completing your preparation before networking maximizes execution confidence.",
+    coa: "Complete the interview prep block before noon.",
+    confidence: "94%",
+  },
+
+  changes: [],
+  decisions: [],
+  risks: [],
+  schedule: [],
+};
+
 export default function TodayPage() {
   return (
-    <main className="min-h-screen bg-zinc-950 text-white">
-      <div className="mx-auto max-w-7xl p-8">
+    <Page>
+      <Hero
+        greeting={today.greeting}
+        user={today.user}
+        confidence={today.confidence}
+        status={today.status}
+      />
 
-        {/* Hero */}
-        <section>{/* Good Morning */}</section>
+      <HighestLeverageCard
+        title={today.highestAction}
+        duration={today.duration}
+        impact={today.impact}
+      />
 
-        {/* Highest Leverage Action */}
-        <section>{/* Action Card */}</section>
+      <SituationGrid
+        changes={today.changes}
+        decisions={today.decisions}
+        risks={today.risks}
+        schedule={today.schedule}
+      />
 
-        {/* Situation Grid */}
-        <section>{/* 2x2 Grid */}</section>
+      <CommanderPanel
+        situation={today.commander.situation}
+        assessment={today.commander.assessment}
+        coa={today.commander.coa}
+        confidence={today.commander.confidence}
+      />
 
-        {/* Commander */}
-        <section>{/* Commander Brief */}</section>
-
-        {/* Footer */}
-        <section>{/* Health Stats */}</section>
-
-      </div>
-    </main>
+      <FooterStats />
+    </Page>
   );
 }
