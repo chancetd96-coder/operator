@@ -1,4 +1,11 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import CaptureItem from "./CaptureItem";
+import {
+  appendCapturedUpdates,
+  type CapturedUpdate,
+} from "@/lib/capture-storage";
 
 type CapturePreviewProps = {
   visible: boolean;
@@ -26,6 +33,37 @@ const previewItems = [
 export default function CapturePreview({
   visible,
 }: CapturePreviewProps) {
+  const router = useRouter();
+
+  function approveAll() {
+    const updates: CapturedUpdate[] = [
+      {
+        id: crypto.randomUUID(),
+        type: "change",
+        title: "Monday meeting moved",
+        detail: "Changed from 0800 to 0900.",
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "schedule",
+        title: "Call John at Defense Unicorns",
+        detail: "Tomorrow morning.",
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "decision",
+        title: "Schedule quarterly deliverables review",
+        detail: "Meeting date and time still need confirmation.",
+        createdAt: new Date().toISOString(),
+      },
+    ];
+
+    appendCapturedUpdates(updates);
+    router.push("/today");
+  }
+
   if (!visible) {
     return (
       <section className="rounded-2xl border border-dashed border-zinc-800 p-8 text-center">
@@ -56,7 +94,10 @@ export default function CapturePreview({
 
       <div className="mt-6 space-y-3">
         {previewItems.map((item) => (
-          <CaptureItem key={`${item.type}-${item.title}`} {...item} />
+          <CaptureItem
+            key={`${item.type}-${item.title}`}
+            {...item}
+          />
         ))}
       </div>
 
@@ -77,6 +118,7 @@ export default function CapturePreview({
 
         <button
           type="button"
+          onClick={approveAll}
           className="rounded-lg bg-white px-4 py-2 font-semibold text-zinc-950 transition hover:bg-zinc-200"
         >
           Approve All
