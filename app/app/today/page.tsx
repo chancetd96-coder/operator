@@ -1,9 +1,9 @@
 import Page from "@/components/layout/Page";
-import Hero from "@/components/layout/Hero";
-import HighestLeverageCard from "@/components/layout/HighestLeverageCard";
-import SituationGrid from "@/components/layout/SituationGrid";
-import CommanderPanel from "@/components/layout/CommanderPanel";
-import FooterStats from "@/components/layout/FooterStats";
+import Hero from "@/components/operator/Hero";
+import HighestLeverageCard from "@/components/operator/HighestLeverageCard";
+import SituationGrid from "@/components/operator/SituationGrid";
+import CommanderPanel from "@/components/operator/CommanderPanel";
+import FooterStats from "@/components/operator/FooterStats";
 
 const today = {
   greeting: "Good Morning",
