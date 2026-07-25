@@ -6,51 +6,92 @@ import {
   appendCapturedUpdates,
   type CapturedUpdate,
 } from "@/lib/capture-storage";
-import type { InterpretedCaptureItem } from "@/lib/services/capture-interpreter";
+import type { OperatorEvent } from "@/lib/types/operator-event";
 
 type CapturePreviewProps = {
-  items: InterpretedCaptureItem[];
+  events: OperatorEvent[];
 };
 
-function toCapturedUpdate(
-  item: InterpretedCaptureItem,
-): CapturedUpdate {
+function labelForEvent(event: OperatorEvent): string {
+  const labels: Record<OperatorEvent["type"], string> = {
+    "meeting.create": "Meeting Request",
+    "meeting.update": "Meeting Update",
+    "task.create": "Task",
+    "decision.record": "Decision",
+    "risk.create": "Risk",
+    "reminder.create": "Reminder",
+    "note.record": "Note",
+  };
+
+  return labels[event.type];
+}
+
+function detailForEvent(event: OperatorEvent): string {
+  const details: string[] = [];
+
+  if (event.time?.raw) {
+    details.push(`Time: ${event.time.raw}`);
+  }
+
+  if (event.people.length > 0) {
+    details.push(
+      `People: ${event.people.map((person) => person.name).join(", ")}`,
+    );
+  }
+
+  if (event.missingFields.length > 0) {
+    details.push(`Missing: ${event.missingFields.join(", ")}`);
+  }
+
+  details.push(`Confidence: ${Math.round(event.confidence * 100)}%`);
+
+  return details.join(" • ");
+}
+
+function toCapturedUpdate(event: OperatorEvent): CapturedUpdate {
   const type =
-    item.type === "task"
-      ? "schedule"
-      : item.type;
+    event.type === "decision.record"
+      ? "decision"
+      : event.type === "risk.create"
+        ? "risk"
+        : event.type === "meeting.create" ||
+            event.type === "meeting.update" ||
+            event.type === "reminder.create" ||
+            event.type === "task.create"
+          ? "schedule"
+          : "change";
 
   return {
-    id: item.id,
+    id: event.id,
     type,
-    title: item.title,
-    detail: item.detail,
-    createdAt: new Date().toISOString(),
+    title: event.title,
+    detail: event.description ?? event.sourceText,
+    createdAt: event.createdAt,
   };
 }
 
 export default function CapturePreview({
-  items,
+  events,
 }: CapturePreviewProps) {
   const router = useRouter();
 
   function approveAll() {
-    appendCapturedUpdates(items.map(toCapturedUpdate));
+    appendCapturedUpdates(events.map(toCapturedUpdate));
     router.push("/today");
   }
 
-  if (items.length === 0) {
+  if (events.length === 0) {
     return (
       <section className="rounded-2xl border border-dashed border-zinc-800 p-8 text-center">
         <p className="text-zinc-500">
-          Structured updates will appear here after processing.
+          Structured events will appear here after processing.
         </p>
       </section>
     );
   }
 
-  const unresolvedCount = items.filter(
-    (item) => item.status === "needs-detail",
+  const unresolvedCount = events.filter(
+    (event) => event.missingFields.length > 0,
   ).length;
 
   return (
@@ -58,36 +99,36 @@ export default function CapturePreview({
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
-            Proposed Updates
+            Review Queue
           </p>
 
           <h2 className="mt-2 text-2xl font-semibold">
-            Operator found {items.length}{" "}
-            {items.length === 1 ? "action" : "actions"}
+            Operator found {events.length}{" "}
+            {events.length === 1 ? "event" : "events"}
           </h2>
 
           {unresolvedCount > 0 ? (
             <p className="mt-2 text-sm text-amber-400">
               {unresolvedCount}{" "}
-              {unresolvedCount === 1 ? "item needs" : "items need"} more detail.
+              {unresolvedCount === 1 ? "event needs" : "events need"} more detail.
             </p>
           ) : null}
         </div>
 
         <span className="rounded-full bg-violet-500/20 px-3 py-1 text-sm text-violet-300">
-          Interpreter Preview
+          Interpreter v1
         </span>
       </div>
 
       <div className="mt-6 space-y-3">
-        {items.map((item) => (
+        {events.map((event) => (
           <CaptureItem
-            key={item.id}
-            type={item.label}
-            title={item.title}
-            detail={item.detail}
+            key={event.id}
+            type={labelForEvent(event)}
+            title={event.sourceText}
+            detail={detailForEvent(event)}
             status={
-              item.status === "needs-detail"
+              event.missingFields.length > 0
                 ? "Needs detail"
                 : "Ready"
             }

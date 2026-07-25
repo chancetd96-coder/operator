@@ -4,18 +4,16 @@ import { useState } from "react";
 import CaptureInput from "@/components/capture/CaptureInput";
 import CapturePreview from "@/components/capture/CapturePreview";
 import Page from "@/components/layout/Page";
-import {
-  interpretCaptureNote,
-  type InterpretedCaptureItem,
-} from "@/lib/services/capture-interpreter";
+import { interpretNote } from "@/lib/interpreter";
+import type { OperatorEvent } from "@/lib/types/operator-event";
 
 export default function CapturePage() {
   const [note, setNote] = useState("");
-  const [items, setItems] = useState<InterpretedCaptureItem[]>([]);
+  const [events, setEvents] = useState<OperatorEvent[]>([]);
 
   function processNote() {
     if (!note.trim()) return;
-    setItems(interpretCaptureNote(note));
+    setEvents(interpretNote(note));
   }
 
   return (
@@ -24,12 +22,12 @@ export default function CapturePage() {
         value={note}
         onChange={(value) => {
           setNote(value);
-          setItems([]);
+          setEvents([]);
         }}
         onProcess={processNote}
       />
 
-      <CapturePreview items={items} />
+      <CapturePreview events={events} />
     </Page>
   );
 }
