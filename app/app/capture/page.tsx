@@ -4,7 +4,7 @@ import { useState } from "react";
 import CaptureInput from "@/components/capture/CaptureInput";
 import CapturePreview from "@/components/capture/CapturePreview";
 import Page from "@/components/layout/Page";
-import { interpretNote } from "@/lib/interpreter";
+import { interpretNote } from "@/lib/interpreter/engine";
 import type { OperatorEvent } from "@/lib/types/operator-event";
 
 export default function CapturePage() {
