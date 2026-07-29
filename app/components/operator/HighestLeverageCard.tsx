@@ -27,7 +27,12 @@ export default function HighestLeverageCard({
         <Metric label="Expected Impact" value={impact} />
       </div>
 
-      <PrimaryButton className="mt-8">Start Working</PrimaryButton>
+      <PrimaryButton
+  href="/focus"
+  className="mt-8"
+>
+  Start Working
+</PrimaryButton>
     </Card>
   );
 }
