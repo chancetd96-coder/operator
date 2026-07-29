@@ -9,7 +9,7 @@ import {
 } from "@/lib/services/memory";
 
 type MissionMemoryPanelProps = {
-  missionId: number;
+  missionId: string;
 };
 
 const ROLE_LABELS: Record<MissionMemoryRole, string> = {

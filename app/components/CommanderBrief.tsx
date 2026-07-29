@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 
 import { generateCommanderBrief } from "@/lib/commander";
-import type { Mission } from "@/types/mission";
+import type { Mission } from "@/lib/types/mission";
 
 type CommanderBriefProps = {
   missions: Mission[];

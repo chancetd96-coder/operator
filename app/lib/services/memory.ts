@@ -65,7 +65,7 @@ function mapMemoryRow(
 }
 
 async function getCloudMissionId(
-  legacyMissionId: number,
+  legacyMissionId: string | number,
 ): Promise<string> {
   const supabase = createClient();
 
@@ -86,7 +86,7 @@ async function getCloudMissionId(
 
 export const MissionMemoryService = {
   async getHistory(
-    legacyMissionId: number,
+    legacyMissionId: string,
     limit = 100,
   ): Promise<MissionMemoryEntry[]> {
     const supabase = createClient();
@@ -114,7 +114,7 @@ export const MissionMemoryService = {
   },
 
   async append(
-    legacyMissionId: number,
+    legacyMissionId: string,
     entry: {
       role: MissionMemoryRole;
       content: string;

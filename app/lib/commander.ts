@@ -2,7 +2,7 @@ import type {
   Mission,
   MissionPriority,
   MissionTask,
-} from "@/types/mission";
+} from "@/lib/types/mission";
 
 export type MissionHealthStatus =
   | "Healthy"
@@ -20,13 +20,13 @@ export type CommanderAlert = {
   type: CommanderAlertType;
   title: string;
   detail: string;
-  missionId: number;
+  missionId: string;
   missionTitle: string;
   taskId?: string;
 };
 
 export type RankedTask = {
-  missionId: number;
+  missionId: string;
   missionTitle: string;
   task: MissionTask;
   score: number;
@@ -34,7 +34,7 @@ export type RankedTask = {
 };
 
 export type MissionHealth = {
-  missionId: number;
+  missionId: string;
   missionTitle: string;
   score: number;
   status: MissionHealthStatus;
@@ -76,7 +76,7 @@ function startOfToday(): Date {
   );
 }
 
-function parseDate(value: string | null): Date | null {
+function parseDate(value: string | null | undefined): Date | null {
   if (!value) return null;
 
   const parsed = new Date(`${value}T00:00:00`);
@@ -184,12 +184,12 @@ export function scoreTask(
     reasons.push("Near completion");
   }
 
-  if (task.blockers.length > 0) {
+  if ((task.blockers ?? []).length > 0) {
     score += 6;
     reasons.push("Has recorded blockers");
   }
 
-  if (task.risks.length > 0) {
+  if ((task.risks ?? []).length > 0) {
     score += 4;
     reasons.push("Has task risks");
   }
@@ -357,7 +357,7 @@ export function getCommanderAlerts(
           type: "Blocked",
           title: task.title,
           detail:
-            task.blockers[0] ??
+            (task.blockers ?? [])[0] ??
             "Task is marked blocked.",
           missionId: mission.id,
           missionTitle: mission.title,
@@ -388,8 +388,8 @@ export function getCommanderAlerts(
           type: "Risk",
           title: risk.title,
           detail:
-            risk.mitigation ||
-            risk.description ||
+            (risk.mitigation ?? "") ||
+            (risk.description ?? risk.title) ||
             "No mitigation recorded.",
           missionId: mission.id,
           missionTitle: mission.title,

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import type { Mission } from "@/types/mission";
+import type { Mission } from "@/lib/types/mission";
 
 type TimelineView = "Timeline" | "Week" | "Month";
 
@@ -13,7 +13,7 @@ type TimelineItemType =
 
 type TimelineItem = {
   id: string;
-  missionId: number;
+  missionId: string;
   sourceId: string;
   type: TimelineItemType;
   title: string;

@@ -20,7 +20,7 @@ import type {
   Mission,
   MissionTask,
   TaskStatus,
-} from "@/types/mission";
+} from "@/lib/types/mission";
 
 const TASK_STATUSES: TaskStatus[] = [
   "Not Started",
@@ -79,9 +79,9 @@ useEffect(() => {
   let active = true;
 
   async function hydrateMission() {
-    const missionId = Number(params.id);
+    const missionId = params.id;
 
-    if (Number.isNaN(missionId)) {
+    if (!missionId) {
       if (active) {
         setMission(null);
         setHydrated(true);

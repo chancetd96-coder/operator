@@ -3,7 +3,7 @@
 import MissionMemoryPanel from "@/components/MissionMemoryPanel";
 
 type Props = {
-  missionId: number;
+  missionId: string;
 };
 
 export default function MemoryTab({ missionId }: Props) {

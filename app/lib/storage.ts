@@ -3,7 +3,7 @@ import type {
   MissionMeeting,
   MissionRisk,
   MissionTask,
-} from "@/types/mission";
+} from "@/lib/types/mission";
 
 const MISSIONS_KEY = "operator-missions";
 const SELECTED_MISSION_KEY = "operator-selected-mission-id";
@@ -14,7 +14,7 @@ function canUseStorage(): boolean {
 
 function normalizeTask(
   task: MissionTask | string,
-  missionId: number,
+  missionId: string,
   index: number,
 ): MissionTask {
   if (typeof task !== "string") {
@@ -51,7 +51,7 @@ function normalizeTask(
 
 function normalizeMeeting(
   meeting: MissionMeeting | string,
-  missionId: number,
+  missionId: string,
   index: number,
 ): MissionMeeting {
   if (typeof meeting !== "string") {
@@ -76,7 +76,7 @@ function normalizeMeeting(
 
 function normalizeRisk(
   risk: MissionRisk | string,
-  missionId: number,
+  missionId: string,
   index: number,
 ): MissionRisk {
   if (typeof risk !== "string") {
@@ -162,7 +162,7 @@ export function saveMissions(missions: Mission[]): void {
   );
 }
 
-export function loadSelectedMissionId(): number | null {
+export function loadSelectedMissionId(): string | null {
   if (!canUseStorage()) return null;
 
   const raw = window.localStorage.getItem(
@@ -171,13 +171,11 @@ export function loadSelectedMissionId(): number | null {
 
   if (!raw) return null;
 
-  const id = Number(raw);
-
-  return Number.isNaN(id) ? null : id;
+  return raw;
 }
 
 export function saveSelectedMissionId(
-  id: number | null,
+  id: string | null,
 ): void {
   if (!canUseStorage()) return;
 

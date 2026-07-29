@@ -7,10 +7,15 @@ import type {
   MissionStatus,
   MissionTask,
   TaskStatus,
-} from "@/types/mission";
+} from "@/lib/types/mission";
 
 type MissionRow = {
   id: string;
+  created_at?: string | null;
+  updated_at?: string | null;
+  started_at?: string | null;
+  completed_at?: string | null;
+  due_date?: string | null;
   legacy_id: number | null;
   title: string;
   prompt: string;
@@ -68,11 +73,11 @@ function stringArray(value: unknown): string[] {
 }
 
 function toDatabaseMissionStatus(status: MissionStatus): string {
-  return status === "Built" ? "draft" : "active";
+  return status === "complete" ? "draft" : "active";
 }
 
 function fromDatabaseMissionStatus(status: string): MissionStatus {
-  return status === "active" ? "Active" : "Built";
+  return status === "active" ? "active" : "complete";
 }
 
 function toDatabasePriority(
@@ -132,8 +137,8 @@ function fromDatabaseTaskStatus(status: string): TaskStatus {
 }
 
 function combineDateAndTime(
-  date: string | null,
-  time: string | null,
+  date: string | null | undefined,
+  time: string | null | undefined,
 ): string | null {
   if (!date) {
     return null;
@@ -146,7 +151,7 @@ function combineDateAndTime(
   return `${date}T${time}:00`;
 }
 
-function splitDateTime(value: string | null): {
+function splitDateTime(value: string | null | undefined): {
   date: string | null;
   time: string | null;
 } {
@@ -401,10 +406,10 @@ export async function saveMissionToCloud(
         due_date: task.dueDate,
         scheduled_date: task.scheduledDate,
         sort_order: index,
-        comments: task.comments,
+        comments: task.comments ?? [],
         risks: task.risks,
         blockers: task.blockers,
-        meeting_ids: task.meetingIds,
+        meeting_ids: task.meetingIds ?? [],
       })),
     );
 
@@ -421,9 +426,9 @@ export async function saveMissionToCloud(
         title: meeting.title,
         event_type: "meeting",
         starts_at: combineDateAndTime(meeting.date, meeting.time),
-        notes: meeting.notes,
-        description: meeting.notes,
-        task_ids: meeting.taskIds,
+        notes: meeting.notes ?? [],
+        description: meeting.notes ?? [],
+        task_ids: meeting.taskIds ?? [],
       })),
     );
 
@@ -440,7 +445,7 @@ export async function saveMissionToCloud(
         title: risk.title,
         description: risk.description,
         mitigation: risk.mitigation,
-        task_ids: risk.taskIds,
+        task_ids: risk.taskIds ?? [],
         resolved: risk.resolved,
         resolved_at: risk.resolved ? new Date().toISOString() : null,
       })),
@@ -512,8 +517,12 @@ function mapMissionRow(
   }));
 
   return {
-    id: row.legacy_id ?? Date.now(),
+    id: String(row.legacy_id ?? row.id ?? Date.now()),
     title: row.title,
+    objective:
+      row.summary ||
+      row.title ||
+      "Execute the mission.",
     prompt: row.prompt,
     summary: row.summary,
     assumptions: stringArray(row.assumptions),
@@ -528,5 +537,15 @@ function mapMissionRow(
     schedule: stringArray(row.schedule),
     resources: stringArray(row.resources),
     successMetrics: stringArray(row.success_metrics),
+    createdAt:
+      row.created_at ??
+      new Date().toISOString(),
+    updatedAt:
+      row.updated_at ??
+      row.created_at ??
+      new Date().toISOString(),
+    startedAt: row.started_at ?? undefined,
+    completedAt: row.completed_at ?? undefined,
+    dueDate: row.due_date ?? undefined,
   };
 }

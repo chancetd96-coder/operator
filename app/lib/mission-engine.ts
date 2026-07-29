@@ -1,4 +1,4 @@
-import type { Mission, MissionPriority } from "@/types/mission";
+import type { Mission, MissionPriority } from "@/lib/types/mission";
 
 export function getMissionHealth(mission: Mission) {
   if (mission.progress >= 80) return "Excellent";

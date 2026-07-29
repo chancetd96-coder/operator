@@ -15,7 +15,7 @@ import {
 } from "@/lib/storage";
 
 import { MissionRepository } from "@/lib/repositories/missionRepository";
-import type { Mission } from "@/types/mission";
+import type { Mission } from "@/lib/types/mission";
 
 import Panel from "@/components/panel";
 import DailyBriefing from "@/components/DailyBriefing";
@@ -75,14 +75,19 @@ useEffect(() => {
   );
 }
 
-    const newMission: Mission = {
-  id: Date.now(),
+    const now = new Date().toISOString();
+
+      const newMission: Mission = {
+  id: crypto.randomUUID(),
   title: data.plan.title,
+        objective:
+          data.plan.summary ||
+          "Execute the generated mission plan.",
   prompt: mission,
   summary: data.plan.summary,
   assumptions: data.plan.assumptions,
   recommendation: data.plan.recommendation,
-  status: "Built",
+  status: "planning",
   priority: data.plan.priority ?? "Normal",
   owner: "Chance",
   progress: 0,
@@ -123,6 +128,9 @@ useEffect(() => {
   schedule: data.plan.schedule,
   resources: data.plan.resources,
   successMetrics: data.plan.successMetrics,
+        createdAt: now,
+        updatedAt: now,
+        startedAt: now,
 };
 await MissionRepository.save(newMission);
 const cloudMissions = await MissionRepository.getAll();

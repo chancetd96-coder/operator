@@ -1,6 +1,6 @@
 "use client";
 
-import type { Mission } from "@/types/mission";
+import type { Mission } from "@/lib/types/mission";
 
 type Props = {
   mission: Mission;

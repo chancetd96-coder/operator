@@ -3,7 +3,7 @@
 import type {
   MissionTask,
   TaskStatus,
-} from "@/types/mission";
+} from "@/lib/types/mission";
 
 type Props = {
   tasks: MissionTask[];
