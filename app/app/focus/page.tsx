@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Page from "@/components/layout/Page";
+
+const SESSION_STORAGE_KEY = "operator-last-focus-session";
 
 function formatElapsed(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600);
@@ -15,10 +18,21 @@ function formatElapsed(totalSeconds: number): string {
 }
 
 export default function FocusPage() {
+  const router = useRouter();
+
   const [isRunning, setIsRunning] = useState(true);
+  const [isCompleting, setIsCompleting] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [notes, setNotes] = useState("");
   const [blockers, setBlockers] = useState("");
+  const [completedItems, setCompletedItems] = useState<string[]>([]);
+
+  const checklist = [
+    "Review company and role",
+    "Practice interview stories",
+    "Prepare questions",
+    "Confirm compensation position",
+  ];
 
   useEffect(() => {
     if (!isRunning) return;
@@ -29,6 +43,39 @@ export default function FocusPage() {
 
     return () => window.clearInterval(interval);
   }, [isRunning]);
+
+  function toggleChecklistItem(item: string) {
+    setCompletedItems((current) =>
+      current.includes(item)
+        ? current.filter((existing) => existing !== item)
+        : [...current, item],
+    );
+  }
+
+  function completeSession() {
+    if (isCompleting) return;
+
+    setIsCompleting(true);
+    setIsRunning(false);
+
+    const summary = {
+      title: "Finish Defense Unicorns Interview Prep",
+      elapsedSeconds,
+      elapsed: formatElapsed(elapsedSeconds),
+      notes: notes.trim(),
+      blockers: blockers.trim(),
+      completedItems,
+      completedAt: new Date().toISOString(),
+    };
+
+    window.localStorage.setItem(
+      SESSION_STORAGE_KEY,
+      JSON.stringify(summary),
+    );
+
+    router.push("/today");
+    router.refresh();
+  }
 
   return (
     <Page>
@@ -70,21 +117,27 @@ export default function FocusPage() {
         <h2 className="text-lg font-semibold">Definition of Done</h2>
 
         <div className="mt-4 space-y-3">
-          {[
-            "Review company and role",
-            "Practice interview stories",
-            "Prepare questions",
-            "Confirm compensation position",
-          ].map((item) => (
+          {checklist.map((item) => (
             <label
               key={item}
               className="flex items-center gap-3 rounded-lg border border-zinc-800 p-3"
             >
               <input
                 type="checkbox"
+                checked={completedItems.includes(item)}
+                onChange={() => toggleChecklistItem(item)}
                 className="h-4 w-4"
               />
-              <span>{item}</span>
+
+              <span
+                className={
+                  completedItems.includes(item)
+                    ? "text-zinc-500 line-through"
+                    : ""
+                }
+              >
+                {item}
+              </span>
             </label>
           ))}
         </div>
@@ -129,9 +182,11 @@ export default function FocusPage() {
       <section className="flex justify-end">
         <button
           type="button"
-          className="rounded-lg bg-white px-5 py-3 font-semibold text-zinc-950 transition hover:bg-zinc-200"
+          disabled={isCompleting}
+          onClick={completeSession}
+          className="rounded-lg bg-white px-5 py-3 font-semibold text-zinc-950 transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Complete Session
+          {isCompleting ? "Completing..." : "Complete Session"}
         </button>
       </section>
     </Page>
