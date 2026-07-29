@@ -11,7 +11,9 @@ export type OperatorEventStatus =
   | "draft"
   | "approved"
   | "rejected"
-  | "committed";
+  | "committed"
+  | "completed"
+  | "cancelled";
 
 export type OperatorEventSource =
   | "capture"
@@ -42,9 +44,10 @@ export type OperatorEventTime = {
 
 export type OperatorEvent = {
   id: string;
-  organizationId?: string;
-  workspaceId?: string;
-  campaignId?: string;
+ organizationId?: string;
+workspaceId?: string;
+missionId?: string;
+
 
   type: OperatorEventType;
   status: OperatorEventStatus;
