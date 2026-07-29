@@ -1,11 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CaptureItem from "./CaptureItem";
 import {
-  appendCapturedUpdates,
-  type CapturedUpdate,
-} from "@/lib/capture-storage";
+  approveEvents,
+  rejectEvent,
+} from "@/lib/repositories/operatorEventRepository";
 import type { OperatorEvent } from "@/lib/types/operator-event";
 
 type CapturePreviewProps = {
@@ -48,36 +49,66 @@ function detailForEvent(event: OperatorEvent): string {
   return details.join(" • ");
 }
 
-function toCapturedUpdate(event: OperatorEvent): CapturedUpdate {
-  const type =
-    event.type === "decision.record"
-      ? "decision"
-      : event.type === "risk.create"
-        ? "risk"
-        : event.type === "meeting.create" ||
-            event.type === "meeting.update" ||
-            event.type === "reminder.create" ||
-            event.type === "task.create"
-          ? "schedule"
-          : "change";
-
-  return {
-    id: event.id,
-    type,
-    title: event.title,
-    detail: event.description ?? event.sourceText,
-    createdAt: event.createdAt,
-  };
-}
-
 export default function CapturePreview({
   events,
 }: CapturePreviewProps) {
   const router = useRouter();
+  const [visibleEvents, setVisibleEvents] = useState(events);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function approveAll() {
-    appendCapturedUpdates(events.map(toCapturedUpdate));
-    router.push("/today");
+  if (visibleEvents !== events && visibleEvents.length === 0 && events.length > 0) {
+    setVisibleEvents(events);
+  }
+
+  async function approveAll() {
+    const unresolved = visibleEvents.some(
+      (event) => event.missingFields.length > 0,
+    );
+
+    if (unresolved || isSaving) return;
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      await approveEvents(
+        visibleEvents.map((event) => event.id),
+      );
+
+      router.push("/today");
+      router.refresh();
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Operator could not approve these events.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function rejectOne(eventId: string) {
+    if (isSaving) return;
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      await rejectEvent(eventId);
+      setVisibleEvents((current) =>
+        current.filter((event) => event.id !== eventId),
+      );
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Operator could not reject this event.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   if (events.length === 0) {
@@ -90,7 +121,7 @@ export default function CapturePreview({
     );
   }
 
-  const unresolvedCount = events.filter(
+  const unresolvedCount = visibleEvents.filter(
     (event) => event.missingFields.length > 0,
   ).length;
 
@@ -103,8 +134,8 @@ export default function CapturePreview({
           </p>
 
           <h2 className="mt-2 text-2xl font-semibold">
-            Operator found {events.length}{" "}
-            {events.length === 1 ? "event" : "events"}
+            Operator found {visibleEvents.length}{" "}
+            {visibleEvents.length === 1 ? "event" : "events"}
           </h2>
 
           {unresolvedCount > 0 ? (
@@ -116,42 +147,65 @@ export default function CapturePreview({
         </div>
 
         <span className="rounded-full bg-violet-500/20 px-3 py-1 text-sm text-violet-300">
-          Interpreter v1
+          Supabase Drafts
         </span>
       </div>
 
       <div className="mt-6 space-y-3">
-        {events.map((event) => (
-          <CaptureItem
-            key={event.id}
-            type={labelForEvent(event)}
-            title={event.sourceText}
-            detail={detailForEvent(event)}
-            status={
-              event.missingFields.length > 0
-                ? "Needs detail"
-                : "Ready"
-            }
-          />
+        {visibleEvents.map((event) => (
+          <div key={event.id}>
+            <CaptureItem
+              type={labelForEvent(event)}
+              title={event.sourceText}
+              detail={detailForEvent(event)}
+              status={
+                event.missingFields.length > 0
+                  ? "Needs detail"
+                  : "Ready"
+              }
+            />
+
+            <div className="mt-2 flex justify-end">
+              <button
+                type="button"
+                disabled={isSaving}
+                onClick={() => rejectOne(event.id)}
+                className="text-sm text-zinc-500 transition hover:text-red-300 disabled:opacity-40"
+              >
+                Reject
+              </button>
+            </div>
+          </div>
         ))}
       </div>
+
+      {error ? (
+        <p className="mt-5 text-sm text-red-300">
+          {error}
+        </p>
+      ) : null}
 
       <div className="mt-6 flex flex-wrap justify-end gap-3">
         <button
           type="button"
+          disabled={isSaving}
           onClick={() => router.push("/today")}
-          className="rounded-lg border border-zinc-700 px-4 py-2 font-medium text-zinc-300 transition hover:bg-zinc-800"
+          className="rounded-lg border border-zinc-700 px-4 py-2 font-medium text-zinc-300 transition hover:bg-zinc-800 disabled:opacity-40"
         >
-          Discard
+          Leave Review
         </button>
 
         <button
           type="button"
-          disabled={unresolvedCount > 0}
+          disabled={
+            unresolvedCount > 0 ||
+            visibleEvents.length === 0 ||
+            isSaving
+          }
           onClick={approveAll}
           className="rounded-lg bg-white px-4 py-2 font-semibold text-zinc-950 transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Approve All
+          {isSaving ? "Saving..." : "Approve All"}
         </button>
       </div>
     </section>
