@@ -73,8 +73,7 @@ export default function FocusPage() {
       JSON.stringify(summary),
     );
 
-    router.push("/today");
-    router.refresh();
+    router.push("/focus/debrief");
   }
 
   return (
