@@ -9,6 +9,7 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import MissionMemoryPanel from "@/components/MissionMemoryPanel";
 import MissionTimeline from "@/components/MissionTimeline";
+import MissionOverviewCard from "@/components/workspace/MissionOverviewCard";
 import { MissionRepository } from "@/lib/repositories/missionRepository";
 import { saveSelectedMissionId } from "@/lib/storage";
 
@@ -321,6 +322,8 @@ useEffect(() => {
       </header>
 
       <div className="mx-auto max-w-7xl px-6 py-8 md:py-12">
+        <MissionOverviewCard mission={mission} />
+
         <section className="border-b border-white/10 pb-10">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-4xl">
