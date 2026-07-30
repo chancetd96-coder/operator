@@ -11,6 +11,26 @@ export type OperationalTempo =
   | "High"
   | "Unsustainable";
 
+export type CommanderPriorityActionType =
+  | "risk"
+  | "blocker"
+  | "task"
+  | "meeting";
+
+export type CommanderPriorityActionUrgency =
+  | "immediate"
+  | "high"
+  | "normal";
+
+export interface CommanderPriorityAction {
+  id: string;
+  type: CommanderPriorityActionType;
+  title: string;
+  reason: string;
+  urgency: CommanderPriorityActionUrgency;
+  targetId?: string;
+}
+
 export interface CommanderAssessment {
   missionId: string;
 
@@ -30,6 +50,7 @@ export interface CommanderAssessment {
   blockers: number;
 
   reasons: string[];
+  priorityActions: CommanderPriorityAction[];
 }
 
 export type CommanderBuilder =
