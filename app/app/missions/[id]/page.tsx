@@ -63,6 +63,7 @@ const [activeTab, setActiveTab] =
   const handleCommanderAction = (
   action: CommanderPriorityAction,
 ) => {
+    console.log("Commander action:", action);
   switch (action.type) {
     case "task":
     case "blocker":
