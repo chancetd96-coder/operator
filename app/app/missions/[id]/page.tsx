@@ -21,15 +21,7 @@ import WorkspaceTabs, {
 import type {
   Mission,
   MissionTask,
-  TaskStatus,
 } from "@/lib/types/mission";
-
-const TASK_STATUSES: TaskStatus[] = [
-  "Not Started",
-  "In Progress",
-  "Blocked",
-  "Complete",
-];
 
 function calculateMissionProgress(
   tasks: MissionTask[],
