@@ -380,7 +380,15 @@ useEffect(() => {
       <div className="mx-auto max-w-7xl px-6 py-8 md:py-12">
         <MissionOverviewCard mission={mission} />
 
-        <section className="border-b border-white/10 pb-10">
+        <div className="mt-8">
+          <WorkspaceTabs
+            activeTab={activeTab}
+            onChange={setActiveTab}
+          />
+        </div>
+
+        {activeTab === "overview" ? (
+          <section className="mt-8 border-b border-white/10 pb-10">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-4xl">
               <p className="text-sm tracking-[0.3em] text-cyan-300/70">
@@ -429,21 +437,6 @@ useEffect(() => {
                   }}
                 />
               </div>
-<WorkspaceTabs
-  activeTab={activeTab}
-  onChange={setActiveTab}
-/>
-{activeTab === "documents" ? (
-  <section className="mt-6 rounded-2xl border border-dashed border-white/10 p-8 text-sm text-white/40">
-    Documents workspace coming next.
-  </section>
-) : null}
-
-{activeTab === "commander" ? (
-  <section className="mt-6 rounded-2xl border border-dashed border-white/10 p-8 text-sm text-white/40">
-    Commander workspace coming next.
-  </section>
-) : null}
               <div className="mt-4 flex justify-between text-xs text-white/40">
                 <span>
                   {completedTaskCount} complete
@@ -454,9 +447,11 @@ useEffect(() => {
               </div>
             </div>
           </div>
-        </section>
+          </section>
+        ) : null}
 
-        <div className="mt-8 grid gap-8 xl:grid-cols-[1.5fr_0.8fr]">
+        {activeTab === "tasks" ? (
+          <div className="mt-8 grid gap-8 xl:grid-cols-[1.5fr_0.8fr]">
           <MissionTaskPanel
             tasks={mission.tasks}
             onAddTask={addTask}
@@ -619,14 +614,51 @@ useEffect(() => {
               </div>
             </section>
           </aside>
-        </div>
-       {activeTab === "memory" ? (
-  <MissionMemoryPanel missionId={mission.id} />
-) : null}
+          </div>
+        ) : null}
 
-{activeTab === "timeline" ? (
-  <MissionTimelinePanel events={timelineEvents} />
-) : null}
+        {activeTab === "memory" ? (
+          <div className="mt-8">
+            <MissionMemoryPanel missionId={mission.id} />
+          </div>
+        ) : null}
+
+        {activeTab === "timeline" ? (
+          <div className="mt-8">
+            <MissionTimelinePanel
+              events={timelineEvents}
+            />
+          </div>
+        ) : null}
+
+        {activeTab === "documents" ? (
+          <section className="mt-8 rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-10 text-center">
+            <p className="text-sm font-medium text-white/65">
+              Documents workspace
+            </p>
+
+            <p className="mt-2 text-sm text-white/35">
+              Mission documents and attachments are coming next.
+            </p>
+          </section>
+        ) : null}
+
+        {activeTab === "commander" ? (
+          <section className="mt-8 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-10">
+            <p className="text-xs tracking-[0.25em] text-cyan-300/70">
+              COMMANDER INTELLIGENCE
+            </p>
+
+            <h2 className="mt-3 text-2xl font-semibold text-white">
+              Commander workspace
+            </h2>
+
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/45">
+              Live operational assessments, recommendations, blockers,
+              and mission forecasts are coming next.
+            </p>
+          </section>
+        ) : null}
       </div>
     </main>
   );
