@@ -10,9 +10,11 @@ import { useParams, useRouter } from "next/navigation";
 import MissionMemoryPanel from "@/components/MissionMemoryPanel";
 import MissionTimelinePanel from "@/components/workspace/MissionTimelinePanel";
 import MissionOverviewCard from "@/components/workspace/MissionOverviewCard";
+import CommanderWorkspace from "@/components/workspace/CommanderWorkspace";
 import MissionTaskPanel from "@/components/workspace/MissionTaskPanel";
 import { MissionRepository } from "@/lib/repositories/missionRepository";
 import { buildMissionTimeline } from "@/lib/timeline/buildMissionTimeline";
+import { buildCommanderAssessment } from "@/lib/commander/buildCommanderAssessment";
 import { saveSelectedMissionId } from "@/lib/storage";
 
 import WorkspaceTabs, {
@@ -643,22 +645,13 @@ useEffect(() => {
           </section>
         ) : null}
 
-        {activeTab === "commander" ? (
-          <section className="mt-8 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-10">
-            <p className="text-xs tracking-[0.25em] text-cyan-300/70">
-              COMMANDER INTELLIGENCE
-            </p>
-
-            <h2 className="mt-3 text-2xl font-semibold text-white">
-              Commander workspace
-            </h2>
-
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/45">
-              Live operational assessments, recommendations, blockers,
-              and mission forecasts are coming next.
-            </p>
-          </section>
-        ) : null}
+{activeTab === "commander" ? (
+  <div className="mt-8">
+    <CommanderWorkspace
+      assessment={buildCommanderAssessment(mission)}
+    />
+  </div>
+) : null}
       </div>
     </main>
   );
