@@ -262,6 +262,34 @@ export function buildCommanderAssessment(
       task => task.status === "Complete",
     ).length;
 
+    const activeTasks =
+  mission.tasks.filter(
+    task => task.status === "In Progress",
+  ).length;
+
+const overdueTasks =
+  mission.tasks.filter(task => {
+    if (
+      task.status === "Complete" ||
+      !task.dueDate
+    ) {
+      return false;
+    }
+
+    const due =
+      parseMissionDate(task.dueDate);
+
+    return (
+      due !== null &&
+      due < startOfToday()
+    );
+  }).length;
+
+const executionStarted =
+  mission.progress > 10 ||
+  completedTasks > 0 ||
+  activeTasks > 0;
+
   const unresolvedRisks =
     mission.risks.filter(
       risk => !risk.resolved,
@@ -288,8 +316,13 @@ export function buildCommanderAssessment(
         30,
   );
 
+if (executionStarted) {
   confidence -= unresolvedRisks * 5;
   confidence -= blockers * 3;
+} else {
+  confidence -= unresolvedRisks * 2;
+  confidence -= blockers;
+}
 
   confidence = Math.max(
     0,
@@ -301,7 +334,8 @@ export function buildCommanderAssessment(
   if (
     unresolvedRisks >= 3 ||
     blockers >= 3 ||
-    confidence < 40
+    executionStarted &&
+confidence < 40
   ) {
     health = "Critical";
   } else if (
@@ -319,9 +353,11 @@ export function buildCommanderAssessment(
     tempo = "High";
   }
 
-  if (mission.progress < 25) {
-    tempo = "Low";
-  }
+if (!executionStarted) {
+  tempo = "Moderate";
+} else if (mission.progress < 25) {
+  tempo = "Low";
+}
 
   if (
     blockers >= 5 ||
@@ -359,14 +395,19 @@ export function buildCommanderAssessment(
     confidence,
     tempo,
 
-    forecast:
-      confidence > 80
-        ? "On Track"
-        : confidence > 60
-          ? "Monitor Closely"
-          : "Needs Intervention",
+forecast:
+  !executionStarted
+    ? "Establishing Baseline"
+    : confidence > 80
+      ? "On Track"
+      : confidence > 60
+        ? "Monitor Closely"
+        : "Needs Intervention",
 
-    recommendation:
+recommendation:
+  !executionStarted
+    ? "Begin execution on the highest-priority mission actions."
+    :
       unresolvedRisks
         ? "Resolve active risks before expanding scope."
         : blockers
