@@ -1,6 +1,9 @@
 "use client";
 
-import type { CommanderAssessment } from "@/lib/commander/types";
+import type {
+  CommanderAssessment,
+  CommanderPriorityAction,
+} from "@/lib/commander/types";
 
 interface CommanderWorkspaceProps {
   assessment: CommanderAssessment;
@@ -17,18 +20,43 @@ function healthColor(health: CommanderAssessment["health"]) {
   }
 }
 
+function urgencyBadge(
+  urgency: CommanderPriorityAction["urgency"],
+) {
+  switch (urgency) {
+    case "immediate":
+      return {
+        label: "Immediate",
+        className:
+          "border-red-400/30 bg-red-400/10 text-red-300",
+      };
+
+    case "high":
+      return {
+        label: "High",
+        className:
+          "border-amber-400/30 bg-amber-400/10 text-amber-300",
+      };
+
+    case "normal":
+      return {
+        label: "Normal",
+        className:
+          "border-cyan-300/30 bg-cyan-300/10 text-cyan-300",
+      };
+  }
+}
+
 export default function CommanderWorkspace({
   assessment,
 }: CommanderWorkspaceProps) {
   return (
     <section className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-8">
-
       <p className="text-xs tracking-[0.3em] text-cyan-300/70">
-        COMMANDER&aposS ASSESSMENT
+        COMMANDER&apos;S ASSESSMENT
       </p>
 
       <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-
         <Card
           label="Mission Health"
           value={assessment.health}
@@ -49,7 +77,6 @@ export default function CommanderWorkspace({
           label="Forecast"
           value={assessment.forecast}
         />
-
       </div>
 
       <section className="mt-10 rounded-xl border border-white/10 bg-black/20 p-6">
@@ -61,6 +88,43 @@ export default function CommanderWorkspace({
           {assessment.recommendation}
         </p>
       </section>
+
+      {assessment.priorityActions.length > 0 && (
+        <section className="mt-8 rounded-xl border border-white/10 bg-black/20 p-6">
+          <p className="text-xs tracking-[0.2em] text-cyan-300/70">
+            PRIORITY ACTIONS
+          </p>
+
+          <div className="mt-5 space-y-4">
+            {assessment.priorityActions.map((action) => {
+              const badge = urgencyBadge(action.urgency);
+
+              return (
+                <div
+                  key={action.id}
+                  className="rounded-lg border border-white/10 bg-white/5 p-4"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-medium text-white">
+                      {action.title}
+                    </p>
+
+                    <span
+                      className={`rounded-full border px-2 py-1 text-xs ${badge.className}`}
+                    >
+                      {badge.label}
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-sm text-white/60">
+                    {action.reason}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <section className="mt-8 rounded-xl border border-white/10 bg-black/20 p-6">
         <p className="text-xs tracking-[0.2em] text-white/40">
@@ -84,7 +148,6 @@ export default function CommanderWorkspace({
           )}
         </ul>
       </section>
-
     </section>
   );
 }
