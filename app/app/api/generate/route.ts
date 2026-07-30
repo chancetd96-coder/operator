@@ -120,6 +120,11 @@ Rules:
 - Risks must describe an actual threat, dependency, or blocker.
 - Meetings should only be included when coordination is useful.
 - The recommendation must identify the highest-leverage next move.
+Resources:
+- Include only real, externally verifiable references that are directly relevant to the mission.
+- Never invent URLs, document names, GitHub repositories, or internal Operator links.
+- If no trustworthy resources are known, return an empty array.
+- Prefer official documentation over blogs or third-party sources.
           `,
         },
         {
