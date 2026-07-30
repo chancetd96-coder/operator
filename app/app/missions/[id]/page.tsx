@@ -10,6 +10,7 @@ import { useParams, useRouter } from "next/navigation";
 import MissionMemoryPanel from "@/components/MissionMemoryPanel";
 import MissionTimeline from "@/components/MissionTimeline";
 import MissionOverviewCard from "@/components/workspace/MissionOverviewCard";
+import MissionTaskPanel from "@/components/workspace/MissionTaskPanel";
 import { MissionRepository } from "@/lib/repositories/missionRepository";
 import { saveSelectedMissionId } from "@/lib/storage";
 
@@ -221,6 +222,60 @@ useEffect(() => {
   }
 
 
+  function addTask(): void {
+    const newTask: MissionTask = {
+      id: crypto.randomUUID(),
+      title: "New Task",
+      description: "",
+      status: "Not Started",
+      owner: mission?.owner ?? "",
+      dueDate: null,
+      progress: 0,
+      comments: [],
+      meetingIds: [],
+      blockers: [],
+      risks: [],
+    };
+
+    setMission((currentMission) => {
+      if (!currentMission) {
+        return currentMission;
+      }
+
+      const updatedTasks = [
+        ...currentMission.tasks,
+        newTask,
+      ];
+
+      return {
+        ...currentMission,
+        tasks: updatedTasks,
+        progress:
+          calculateMissionProgress(updatedTasks),
+      };
+    });
+  }
+
+  function deleteTask(taskId: string): void {
+    setMission((currentMission) => {
+      if (!currentMission) {
+        return currentMission;
+      }
+
+      const updatedTasks =
+        currentMission.tasks.filter(
+          (task) => task.id !== taskId,
+        );
+
+      return {
+        ...currentMission,
+        tasks: updatedTasks,
+        progress:
+          calculateMissionProgress(updatedTasks),
+      };
+    });
+  }
+
   if (!hydrated) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-black text-white">
@@ -401,146 +456,12 @@ useEffect(() => {
         </section>
 
         <div className="mt-8 grid gap-8 xl:grid-cols-[1.5fr_0.8fr]">
-          <section>
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <p className="text-xs tracking-[0.25em] text-white/40">
-                  EXECUTION
-                </p>
-
-                <h2 className="mt-2 text-2xl font-semibold">
-                  Tasks
-                </h2>
-              </div>
-
-              <span className="text-sm text-white/40">
-                {mission.tasks.length} tasks
-              </span>
-            </div>
-
-            <div className="space-y-4">
-              {mission.tasks.map((task) => (
-                <article
-                  key={task.id}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-5"
-                >
-                  <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                    <div className="flex-1">
-                      <input
-                        value={task.title}
-                        onChange={(event) =>
-                          updateTask(task.id, {
-                            title: event.target.value,
-                          })
-                        }
-                        className="w-full bg-transparent text-lg font-semibold outline-none"
-                      />
-
-                      <textarea
-                        value={task.description}
-                        onChange={(event) =>
-                          updateTask(task.id, {
-                            description:
-                              event.target.value,
-                          })
-                        }
-                        rows={2}
-                        placeholder="Add task details..."
-                        className="mt-2 w-full resize-none bg-transparent text-sm leading-6 text-white/45 outline-none placeholder:text-white/20"
-                      />
-                    </div>
-
-                    <select
-                      value={task.status}
-                      onChange={(event) =>
-                        updateTask(task.id, {
-                          status: event.target
-                            .value as TaskStatus,
-                        })
-                      }
-                      className="rounded-lg border border-white/10 bg-black px-3 py-2 text-sm text-white outline-none"
-                    >
-                      {TASK_STATUSES.map((status) => (
-                        <option
-                          key={status}
-                          value={status}
-                        >
-                          {status}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="mt-5 grid gap-4 md:grid-cols-3">
-                    <label className="text-xs text-white/40">
-                      OWNER
-                      <input
-                        value={task.owner}
-                        onChange={(event) =>
-                          updateTask(task.id, {
-                            owner: event.target.value,
-                          })
-                        }
-                        className="mt-2 w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-sm text-white outline-none"
-                      />
-                    </label>
-
-                    <label className="text-xs text-white/40">
-                      DUE DATE
-                      <input
-                        type="date"
-                        value={task.dueDate ?? ""}
-                        onChange={(event) =>
-                          updateTask(task.id, {
-                            dueDate:
-                              event.target.value ||
-                              null,
-                          })
-                        }
-                        className="mt-2 w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-sm text-white outline-none"
-                      />
-                    </label>
-
-                    <label className="text-xs text-white/40">
-                      PROGRESS: {task.progress}%
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        step="5"
-                        value={task.progress}
-                        onChange={(event) => {
-                          const progress = Number(
-                            event.target.value,
-                          );
-
-                          updateTask(task.id, {
-                            progress,
-                            status:
-                              progress === 100
-                                ? "Complete"
-                                : progress > 0
-                                  ? "In Progress"
-                                  : "Not Started",
-                          });
-                        }}
-                        className="mt-4 w-full"
-                      />
-                    </label>
-                  </div>
-
-                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
-                    <div
-                      className="h-full rounded-full bg-cyan-300 transition-all"
-                      style={{
-                        width: `${task.progress}%`,
-                      }}
-                    />
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
+          <MissionTaskPanel
+            tasks={mission.tasks}
+            onAddTask={addTask}
+            onDeleteTask={deleteTask}
+            onUpdateTask={updateTask}
+          />
 
           <aside className="space-y-6">
             <section className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-5">
