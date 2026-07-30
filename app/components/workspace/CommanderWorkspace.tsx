@@ -6,7 +6,14 @@ import type {
 } from "@/lib/commander/types";
 
 interface CommanderWorkspaceProps {
+
   assessment: CommanderAssessment;
+
+  onActionSelected?: (
+
+    action: CommanderPriorityAction,
+
+  ) => void;
 }
 
 function healthColor(health: CommanderAssessment["health"]) {
@@ -49,6 +56,7 @@ function urgencyBadge(
 
 export default function CommanderWorkspace({
   assessment,
+  onActionSelected,
 }: CommanderWorkspaceProps) {
   return (
     <section className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.04] p-8">
@@ -100,10 +108,12 @@ export default function CommanderWorkspace({
               const badge = urgencyBadge(action.urgency);
 
               return (
-                <div
-                  key={action.id}
-                  className="rounded-lg border border-white/10 bg-white/5 p-4"
-                >
+                <button
+  key={action.id}
+  type="button"
+  onClick={() => onActionSelected?.(action)}
+  className="w-full rounded-lg border border-white/10 bg-white/5 p-4 text-left transition hover:border-cyan-300/30 hover:bg-white/10"
+>
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-medium text-white">
                       {action.title}
@@ -119,7 +129,7 @@ export default function CommanderWorkspace({
                   <p className="mt-2 text-sm text-white/60">
                     {action.reason}
                   </p>
-                </div>
+                </button>
               );
             })}
           </div>

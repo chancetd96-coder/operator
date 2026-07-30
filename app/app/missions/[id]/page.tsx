@@ -26,6 +26,10 @@ import type {
   MissionTask,
 } from "@/lib/types/mission";
 
+import type {
+  CommanderPriorityAction,
+} from "@/lib/commander/types";
+
 function calculateMissionProgress(
   tasks: MissionTask[],
 ): number {
@@ -56,6 +60,24 @@ export default function MissionWorkspacePage() {
   const router = useRouter();
 const [activeTab, setActiveTab] =
   useState<WorkspaceTab>("overview");
+  const handleCommanderAction = (
+  action: CommanderPriorityAction,
+) => {
+  switch (action.type) {
+    case "task":
+    case "blocker":
+      setActiveTab("tasks");
+      break;
+
+    case "risk":
+      setActiveTab("overview");
+      break;
+
+    case "meeting":
+      setActiveTab("timeline");
+      break;
+  }
+};
   const [mission, setMission] = useState<Mission | null>(
     null,
   );
@@ -648,8 +670,9 @@ useEffect(() => {
 {activeTab === "commander" ? (
   <div className="mt-8">
     <CommanderWorkspace
-      assessment={buildCommanderAssessment(mission)}
-    />
+  assessment={buildCommanderAssessment(mission)}
+  onActionSelected={handleCommanderAction}
+/>
   </div>
 ) : null}
       </div>
