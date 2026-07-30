@@ -16,7 +16,7 @@ import { MissionRepository } from "@/lib/repositories/missionRepository";
 import { buildMissionTimeline } from "@/lib/timeline/buildMissionTimeline";
 import { buildCommanderAssessment } from "@/lib/commander/buildCommanderAssessment";
 import { saveSelectedMissionId } from "@/lib/storage";
-
+import DocumentsWorkspace from "@/components/workspace/DocumentsWorkspace";
 import WorkspaceTabs, {
   type WorkspaceTab,
 } from "@/components/workspace/WorkspaceTabs";
@@ -655,17 +655,16 @@ useEffect(() => {
           </div>
         ) : null}
 
-        {activeTab === "documents" ? (
-          <section className="mt-8 rounded-2xl border border-dashed border-white/10 bg-white/[0.025] p-10 text-center">
-            <p className="text-sm font-medium text-white/65">
-              Documents workspace
-            </p>
-
-            <p className="mt-2 text-sm text-white/35">
-              Mission documents and attachments are coming next.
-            </p>
-          </section>
-        ) : null}
+       {activeTab === "documents" ? (
+  <div className="mt-8">
+    <DocumentsWorkspace
+      resources={mission.resources}
+      onChange={(resources) =>
+        updateMission({ resources })
+      }
+    />
+  </div>
+) : null}
 
 {activeTab === "commander" ? (
   <div className="mt-8">
