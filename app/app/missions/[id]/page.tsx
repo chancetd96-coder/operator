@@ -8,10 +8,11 @@ import {
 } from "react";
 import { useParams, useRouter } from "next/navigation";
 import MissionMemoryPanel from "@/components/MissionMemoryPanel";
-import MissionTimeline from "@/components/MissionTimeline";
+import MissionTimelinePanel from "@/components/workspace/MissionTimelinePanel";
 import MissionOverviewCard from "@/components/workspace/MissionOverviewCard";
 import MissionTaskPanel from "@/components/workspace/MissionTaskPanel";
 import { MissionRepository } from "@/lib/repositories/missionRepository";
+import { buildMissionTimeline } from "@/lib/timeline/buildMissionTimeline";
 import { saveSelectedMissionId } from "@/lib/storage";
 
 import WorkspaceTabs, {
@@ -153,6 +154,14 @@ useEffect(() => {
         (task) => task.status === "Complete",
       ).length ?? 0
     );
+  }, [mission]);
+
+  const timelineEvents = useMemo(() => {
+    if (!mission) {
+      return [];
+    }
+
+    return buildMissionTimeline(mission);
   }, [mission]);
 
   function updateMission(
@@ -616,7 +625,7 @@ useEffect(() => {
 ) : null}
 
 {activeTab === "timeline" ? (
-  <MissionTimeline mission={mission} />
+  <MissionTimelinePanel events={timelineEvents} />
 ) : null}
       </div>
     </main>
