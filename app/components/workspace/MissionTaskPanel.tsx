@@ -302,19 +302,39 @@ export default function MissionTaskPanel({
     </span>
   </label>
 </div>
-              {task.status === "Blocked" ? (
-                <div className="mt-4 rounded-xl border border-red-300/20 bg-red-300/[0.05] p-4">
-                  <p className="text-xs font-medium tracking-[0.16em] text-red-200/70">
-                    BLOCKED
-                  </p>
+  <div className="mt-5 border-t border-white/10 pt-5">
+  <label className="block text-xs tracking-[0.12em] text-white/40">
+    BLOCKERS
+    <textarea
+      value={(task.blockers ?? []).join("\n")}
+      onChange={(event) =>
+        onUpdateTask(task.id, {
+          blockers: event.target.value.split("\n"),
+        })
+      }
+      rows={3}
+      placeholder="Add anything preventing this task from moving forward..."
+      className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-sm leading-6 tracking-normal text-white/70 outline-none placeholder:text-white/20 focus:border-red-300/30"
+    />
+    <span className="mt-2 block text-[11px] tracking-normal text-white/25">
+      Enter each blocker on a separate line.
+    </span>
+  </label>
 
-                  <p className="mt-2 text-sm text-white/45">
-                    Capture the blocker in Mission Memory
-                    or Quick Capture so Operator can track
-                    and surface it.
-                  </p>
-                </div>
-              ) : null}
+  {(task.blockers ?? []).some(
+    (blocker) => blocker.trim().length > 0,
+  ) ? (
+    <div className="mt-4 rounded-xl border border-red-300/20 bg-red-300/[0.05] p-4">
+      <p className="text-xs font-medium tracking-[0.16em] text-red-200/70">
+        ACTIVE BLOCKER
+      </p>
+
+      <p className="mt-2 text-sm text-white/45">
+        This task contains an unresolved blocker.
+      </p>
+    </div>
+  ) : null}
+</div>
             </article>
           ))}
         </div>
