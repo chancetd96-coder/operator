@@ -8,6 +8,7 @@ type TimelineView = "Timeline" | "Week" | "Month";
 
 type TimelineItemType =
   | "Task"
+  | "Deadline"
   | "Meeting"
   | "Overdue";
 
@@ -105,30 +106,47 @@ function formatTime(value: string | null): string {
 function buildTimelineItems(
   mission: Mission,
 ): TimelineItem[] {
-  const taskItems: TimelineItem[] =
-    mission.tasks
-      .filter((task) => Boolean(task.dueDate))
-      .map((task) => {
-        const overdue =
-          task.dueDate &&
-          task.status !== "Complete" &&
-          isPastDate(task.dueDate);
+ const scheduledTaskItems: TimelineItem[] =
+  mission.tasks
+    .filter((task) => Boolean(task.scheduledDate))
+    .map((task) => ({
+      id: `scheduled-task-${task.id}`,
+      missionId: mission.id,
+      sourceId: task.id,
+      type: "Task",
+      title: task.title,
+      description:
+        task.description ||
+        "Scheduled mission task.",
+      date: task.scheduledDate as string,
+      time: null,
+      status: task.status,
+      progress: task.progress,
+    }));
 
-        return {
-          id: `task-${task.id}`,
-          missionId: mission.id,
-          sourceId: task.id,
-          type: overdue ? "Overdue" : "Task",
-          title: task.title,
-          description:
-            task.description ||
-            "No task description recorded.",
-          date: task.dueDate as string,
-          time: null,
-          status: task.status,
-          progress: task.progress,
-        };
-      });
+const deadlineItems: TimelineItem[] =
+  mission.tasks
+    .filter((task) => Boolean(task.dueDate))
+    .map((task) => {
+      const overdue =
+        task.status !== "Complete" &&
+        isPastDate(task.dueDate as string);
+
+      return {
+        id: `deadline-${task.id}`,
+        missionId: mission.id,
+        sourceId: task.id,
+        type: overdue ? "Overdue" : "Deadline",
+        title: task.title,
+        description: overdue
+          ? "Task deadline has passed."
+          : "Task completion deadline.",
+        date: task.dueDate as string,
+        time: null,
+        status: task.status,
+        progress: task.progress,
+      };
+    });
 
   const meetingItems: TimelineItem[] =
     mission.meetings
@@ -146,7 +164,11 @@ function buildTimelineItems(
         progress: null,
       }));
 
-  return [...taskItems, ...meetingItems].sort(
+return [
+  ...scheduledTaskItems,
+  ...deadlineItems,
+  ...meetingItems,
+].sort(
     (a, b) => {
       const dateComparison =
         parseLocalDate(a.date).getTime() -
