@@ -153,9 +153,7 @@ const priorityMission = getHighestPriorityMission(missions);
 const criticalMissionCount = getCriticalMissions(missions).length;
 const commanderBrief = generateCommanderBrief(missions);
 
-const activeRiskCount = commanderBrief.alerts.filter(
-  (alert) => alert.type === "Risk",
-).length;
+
 const activeMission = selectedMission;
 
 if (!hydrated) {
@@ -292,7 +290,7 @@ if (!hydrated) {
   overallProgress={overallProgress}
   criticalMissionCount={criticalMissionCount}
   blockedTaskCount={commanderBrief.blockedTaskCount}
-  activeRiskCount={activeRiskCount}
+  activeRiskCount={commanderBrief.activeRiskCount}
   recommendedTask={
     commanderBrief.recommendedTask?.task.title ?? null
   }

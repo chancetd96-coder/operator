@@ -49,6 +49,7 @@ export type CommanderBrief = {
   activeMissionCount: number;
   totalTaskCount: number;
   completedTaskCount: number;
+  activeRiskCount: number;
   blockedTaskCount: number;
   overdueTaskCount: number;
   overallProgress: number;
@@ -91,6 +92,27 @@ function getRecordedItems(
   return (items ?? [])
     .map((item) => item.trim())
     .filter(Boolean);
+}
+function countActiveRisks(
+  missions: Mission[],
+): number {
+  return missions.reduce((missionTotal, mission) => {
+    const missionRiskCount = mission.risks.filter(
+      (risk) => !risk.resolved,
+    ).length;
+
+    const taskRiskCount = mission.tasks.reduce(
+      (taskTotal, task) =>
+        taskTotal + getRecordedItems(task.risks).length,
+      0,
+    );
+
+    return (
+      missionTotal +
+      missionRiskCount +
+      taskRiskCount
+    );
+  }, 0);
 }
 export function isTaskOverdue(task: MissionTask): boolean {
   if (task.status === "Complete") return false;
@@ -363,7 +385,37 @@ const unresolvedRisks = missionRisks + taskRisks;
     unresolvedRisks,
   };
 }
+function calculateExecutionScore(
+  mission: Mission,
+): number {
+  let score = mission.progress;
 
+  const blockers = mission.tasks.reduce(
+    (total, task) =>
+      total +
+      (task.blockers ?? []).filter((b) => b.trim()).length,
+    0,
+  );
+
+  const risks =
+    mission.risks.filter((r) => !r.resolved).length +
+    mission.tasks.reduce(
+      (total, task) =>
+        total +
+        (task.risks ?? []).filter((r) => r.trim()).length,
+      0,
+    );
+
+  const overdue = mission.tasks.filter(
+    isTaskOverdue,
+  ).length;
+
+  score -= blockers * 10;
+  score -= risks * 5;
+  score -= overdue * 8;
+
+  return Math.max(0, Math.min(100, score));
+}
 export function getCommanderAlerts(
   missions: Mission[],
 ): CommanderAlert[] {
@@ -484,7 +536,7 @@ const blockedTaskCount = allTasks.filter(
   const overdueTaskCount = allTasks.filter(
     isTaskOverdue,
   ).length;
-
+const activeRiskCount = countActiveRisks(missions);
   const overallProgress =
     missions.length === 0
       ? 0
@@ -546,6 +598,7 @@ return {
     operatorRecommendation,
     blockedTaskCount,
     overdueTaskCount,
+    activeRiskCount,
     overallProgress,
     priorityMission,
 priorityMissionSummary: priorityMission
@@ -554,9 +607,10 @@ priorityMissionSummary: priorityMission
     recommendedTask: rankedTasks[0] ?? null,
     focusTasks: rankedTasks.slice(0, 3),
     alerts: getCommanderAlerts(missions).slice(0, 6),
-    missionHealth: missions
-      .map(calculateMissionHealth)
-      .sort((a, b) => a.score - b.score),
+   missionHealth: missions
+  .map(calculateMissionHealth)
+  .sort((a, b) => a.score - b.score),
+      
     };
   function buildMissionSummary(mission: Mission): string[] {
   const blockers = mission.tasks.filter(
