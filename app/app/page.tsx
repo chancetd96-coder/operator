@@ -13,7 +13,7 @@ import {
   loadSelectedMissionId,
   saveSelectedMissionId,
 } from "@/lib/storage";
-
+import { generateCommanderBrief } from "@/lib/commander";
 import { MissionRepository } from "@/lib/repositories/missionRepository";
 import type { Mission } from "@/lib/types/mission";
 
@@ -151,7 +151,11 @@ const missionCount = getMissionCount(missions);
 const overallProgress = getOverallProgress(missions);
 const priorityMission = getHighestPriorityMission(missions);
 const criticalMissionCount = getCriticalMissions(missions).length;
+const commanderBrief = generateCommanderBrief(missions);
 
+const activeRiskCount = commanderBrief.alerts.filter(
+  (alert) => alert.type === "Risk",
+).length;
 const activeMission = selectedMission;
 
 if (!hydrated) {
@@ -287,6 +291,11 @@ if (!hydrated) {
   priorityMission={priorityMission?.title ?? null}
   overallProgress={overallProgress}
   criticalMissionCount={criticalMissionCount}
+  blockedTaskCount={commanderBrief.blockedTaskCount}
+  activeRiskCount={activeRiskCount}
+  recommendedTask={
+    commanderBrief.recommendedTask?.task.title ?? null
+  }
 />
 
 <MissionInput
