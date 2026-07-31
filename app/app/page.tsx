@@ -195,13 +195,15 @@ if (!hydrated) {
 
 
 
-          <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-4">
+         <div className="mb-6 rounded-3xl border border-cyan-300/15 bg-gradient-to-br from-cyan-300/[0.05] to-transparent p-5">
+  <p className="text-[11px] font-semibold tracking-[0.18em] text-cyan-300/70">
+    ACTIVE MISSIONS
+  </p>
 
-            <p className="text-xs text-white/40">ACTIVE MISSIONS</p>
-
-            <p className="mt-2 text-3xl font-semibold">{missions.length}</p>
-
-          </div>
+  <p className="mt-2 text-4xl font-bold tabular-nums">
+    {missions.length}
+  </p>
+</div>
 
 
 
@@ -289,29 +291,23 @@ if (!hydrated) {
 
           <div className="mx-auto max-w-6xl">
 
-            <div className="mb-8">
+           <div className="mb-8">
+  <div className="flex items-center gap-3">
+    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-300/20 bg-cyan-300/[0.06] text-lg">
+      ⌘
+    </div>
 
-              <p className="text-sm tracking-[0.3em] text-white/40">
+    <div>
+      <p className="text-[11px] font-semibold tracking-[0.28em] text-cyan-300/70">
+        OPERATOR
+      </p>
 
-                AI CHIEF OF STAFF
-
-              </p>
-
-              <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-6xl">
-
-                What mission are we executing?
-
-              </h2>
-
-              <p className="mt-4 max-w-2xl text-white/50">
-
-                Operator turns goals into a live project dashboard: tasks,
-
-                schedule, meetings, risks, and next actions.
-
-              </p>
-
-            </div>
+      <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+        Mission Control
+      </h1>
+    </div>
+  </div>
+</div>
 <CommanderBrief missions={missions} />
 <DailyBriefing
               missionCount={missionCount}
