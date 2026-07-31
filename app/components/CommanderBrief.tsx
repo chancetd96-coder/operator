@@ -16,7 +16,29 @@ function formatGeneratedAt(value: string): string {
     minute: "2-digit",
   }).format(new Date(value));
 }
+function getNextMeeting(missions: Mission[]) {
+  const now = new Date();
 
+  return missions
+    .flatMap((mission) =>
+      mission.meetings
+        .filter((meeting) => Boolean(meeting.date))
+        .map((meeting) => ({
+          missionId: mission.id,
+          missionTitle: mission.title,
+          meeting,
+          scheduledAt: new Date(
+            `${meeting.date}T${meeting.time ?? "23:59"}:00`,
+          ),
+        })),
+    )
+    .filter((item) => item.scheduledAt >= now)
+    .sort(
+      (a, b) =>
+        a.scheduledAt.getTime() -
+        b.scheduledAt.getTime(),
+    )[0] ?? null;
+}
 export default function CommanderBrief({
   missions,
 }: CommanderBriefProps) {
@@ -26,7 +48,10 @@ export default function CommanderBrief({
     () => generateCommanderBrief(missions),
     [missions],
   );
-
+const nextMeeting = useMemo(
+  () => getNextMeeting(missions),
+  [missions],
+);
   const healthCounts = brief.missionHealth.reduce(
     (counts, mission) => {
       counts[mission.status] += 1;
@@ -263,6 +288,55 @@ export default function CommanderBrief({
         </div>
 
         <aside className="space-y-6">
+          <section className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.025] p-5">
+  <p className="text-xs tracking-[0.25em] text-cyan-300/70">
+    NEXT MEETING
+  </p>
+
+  {nextMeeting ? (
+    <button
+      type="button"
+      onClick={() =>
+        router.push(
+          `/missions/${nextMeeting.missionId}`,
+        )
+      }
+      className="mt-4 w-full rounded-xl border border-white/10 bg-black/20 p-4 text-left transition hover:bg-white/[0.05]"
+    >
+      <p className="text-xs text-white/35">
+        {nextMeeting.missionTitle}
+      </p>
+
+      <h4 className="mt-2 text-base font-semibold">
+        {nextMeeting.meeting.title}
+      </h4>
+
+      <p className="mt-2 text-sm text-white/45">
+        {new Intl.DateTimeFormat("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          hour: nextMeeting.meeting.time
+            ? "numeric"
+            : undefined,
+          minute: nextMeeting.meeting.time
+            ? "2-digit"
+            : undefined,
+        }).format(nextMeeting.scheduledAt)}
+      </p>
+
+      {nextMeeting.meeting.notes ? (
+        <p className="mt-3 line-clamp-2 text-xs leading-5 text-white/35">
+          {nextMeeting.meeting.notes}
+        </p>
+      ) : null}
+    </button>
+  ) : (
+    <p className="mt-4 text-sm text-white/35">
+      No upcoming meetings scheduled.
+    </p>
+  )}
+</section>
           <section className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
             <p className="text-xs tracking-[0.25em] text-white/40">
               MISSION HEALTH
