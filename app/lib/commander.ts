@@ -83,7 +83,13 @@ function parseDate(value: string | null | undefined): Date | null {
 
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
-
+function getRecordedItems(
+  items: string[] | undefined,
+): string[] {
+  return (items ?? [])
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
 export function isTaskOverdue(task: MissionTask): boolean {
   if (task.status === "Complete") return false;
 
@@ -184,15 +190,18 @@ export function scoreTask(
     reasons.push("Near completion");
   }
 
-  if ((task.blockers ?? []).length > 0) {
-    score += 6;
-    reasons.push("Has recorded blockers");
-  }
+const recordedBlockers = getRecordedItems(task.blockers);
+const recordedRisks = getRecordedItems(task.risks);
 
-  if ((task.risks ?? []).length > 0) {
-    score += 4;
-    reasons.push("Has task risks");
-  }
+if (recordedBlockers.length > 0) {
+  score += 10;
+  reasons.push("Has recorded blockers");
+}
+
+if (recordedRisks.length > 0) {
+  score += 6;
+  reasons.push("Has task risks");
+}
 
   if (task.status === "Complete") {
     score -= 100;
@@ -283,17 +292,27 @@ export function calculateMissionHealth(
     (task) => task.status === "Complete",
   ).length;
 
-  const blockedTasks = mission.tasks.filter(
-    (task) => task.status === "Blocked",
-  ).length;
+const blockedTasks = mission.tasks.filter(
+  (task) =>
+    task.status === "Blocked" ||
+    getRecordedItems(task.blockers).length > 0,
+).length;
 
   const overdueTasks = mission.tasks.filter(
     isTaskOverdue,
   ).length;
 
-  const unresolvedRisks = mission.risks.filter(
-    (risk) => !risk.resolved,
-  ).length;
+const missionRisks = mission.risks.filter(
+  (risk) => !risk.resolved,
+).length;
+
+const taskRisks = mission.tasks.reduce(
+  (total, task) =>
+    total + getRecordedItems(task.risks).length,
+  0,
+);
+
+const unresolvedRisks = missionRisks + taskRisks;
 
   const completionRate =
     taskCount === 0
@@ -351,19 +370,36 @@ export function getCommanderAlerts(
         });
       }
 
-      if (task.status === "Blocked") {
-        alerts.push({
-          id: `blocked-${mission.id}-${task.id}`,
-          type: "Blocked",
-          title: task.title,
-          detail:
-            (task.blockers ?? [])[0] ??
-            "Task is marked blocked.",
-          missionId: mission.id,
-          missionTitle: mission.title,
-          taskId: task.id,
-        });
-      }
+const taskBlockers = getRecordedItems(task.blockers);
+const taskRisks = getRecordedItems(task.risks);
+
+if (
+  task.status === "Blocked" ||
+  taskBlockers.length > 0
+) {
+  alerts.push({
+    id: `blocked-${mission.id}-${task.id}`,
+    type: "Blocked",
+    title: task.title,
+    detail:
+      taskBlockers[0] ?? "Task is marked blocked.",
+    missionId: mission.id,
+    missionTitle: mission.title,
+    taskId: task.id,
+  });
+}
+
+taskRisks.forEach((risk, index) => {
+  alerts.push({
+    id: `task-risk-${mission.id}-${task.id}-${index}`,
+    type: "Risk",
+    title: task.title,
+    detail: risk,
+    missionId: mission.id,
+    missionTitle: mission.title,
+    taskId: task.id,
+  });
+});
 
       if (
         !isTaskOverdue(task) &&
@@ -426,9 +462,11 @@ export function generateCommanderBrief(
     (task) => task.status === "Complete",
   ).length;
 
-  const blockedTaskCount = allTasks.filter(
-    (task) => task.status === "Blocked",
-  ).length;
+const blockedTaskCount = allTasks.filter(
+  (task) =>
+    task.status === "Blocked" ||
+    getRecordedItems(task.blockers).length > 0,
+).length;
 
   const overdueTaskCount = allTasks.filter(
     isTaskOverdue,
