@@ -307,11 +307,24 @@ export default function MissionTaskPanel({
     BLOCKERS
     <textarea
       value={(task.blockers ?? []).join("\n")}
-      onChange={(event) =>
-        onUpdateTask(task.id, {
-          blockers: event.target.value.split("\n"),
-        })
-      }
+      onChange={(event) => {
+  const blockers = event.target.value.split("\n");
+
+  const hasActiveBlocker = blockers.some(
+    (blocker) => blocker.trim().length > 0,
+  );
+
+  onUpdateTask(task.id, {
+    blockers,
+    status: hasActiveBlocker
+      ? "Blocked"
+      : task.status === "Blocked"
+        ? task.progress > 0
+          ? "In Progress"
+          : "Not Started"
+        : task.status,
+  });
+}}
       rows={3}
       placeholder="Add anything preventing this task from moving forward..."
       className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-sm leading-6 tracking-normal text-white/70 outline-none placeholder:text-white/20 focus:border-red-300/30"
