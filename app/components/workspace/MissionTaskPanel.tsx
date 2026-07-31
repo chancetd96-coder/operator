@@ -335,6 +335,39 @@ export default function MissionTaskPanel({
     </div>
   ) : null}
 </div>
+<div className="mt-5 border-t border-white/10 pt-5">
+  <label className="block text-xs tracking-[0.12em] text-white/40">
+    RISKS
+    <textarea
+      value={(task.risks ?? []).join("\n")}
+      onChange={(event) =>
+        onUpdateTask(task.id, {
+          risks: event.target.value.split("\n"),
+        })
+      }
+      rows={3}
+      placeholder="Add risks that could delay, degrade, or prevent completion..."
+      className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-sm leading-6 tracking-normal text-white/70 outline-none placeholder:text-white/20 focus:border-amber-300/30"
+    />
+    <span className="mt-2 block text-[11px] tracking-normal text-white/25">
+      Enter each risk on a separate line.
+    </span>
+  </label>
+
+  {(task.risks ?? []).some(
+    (risk) => risk.trim().length > 0,
+  ) ? (
+    <div className="mt-4 rounded-xl border border-amber-300/20 bg-amber-300/[0.05] p-4">
+      <p className="text-xs font-medium tracking-[0.16em] text-amber-200/70">
+        ACTIVE RISK
+      </p>
+
+      <p className="mt-2 text-sm text-white/45">
+        This task contains a risk that requires monitoring.
+      </p>
+    </div>
+  ) : null}
+</div>
             </article>
           ))}
         </div>
