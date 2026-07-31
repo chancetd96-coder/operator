@@ -283,7 +283,28 @@ export default function MissionTaskPanel({
                   }}
                 />
               </div>
-
+<div className="mt-5 border-t border-white/10 pt-5">
+  <label className="block text-xs tracking-[0.12em] text-white/40">
+    TASK COMMENTS
+    <textarea
+      value={(task.comments ?? []).join("\n")}
+      onChange={(event) =>
+        onUpdateTask(task.id, {
+          comments: event.target.value
+            .split("\n")
+            .map((comment) => comment.trim())
+            .filter(Boolean),
+        })
+      }
+      rows={3}
+      placeholder="Add updates, instructions, or context..."
+      className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-sm leading-6 tracking-normal text-white/70 outline-none placeholder:text-white/20 focus:border-cyan-300/30"
+    />
+    <span className="mt-2 block text-[11px] tracking-normal text-white/25">
+      Enter each comment on a separate line.
+    </span>
+  </label>
+</div>
               {task.status === "Blocked" ? (
                 <div className="mt-4 rounded-xl border border-red-300/20 bg-red-300/[0.05] p-4">
                   <p className="text-xs font-medium tracking-[0.16em] text-red-200/70">
