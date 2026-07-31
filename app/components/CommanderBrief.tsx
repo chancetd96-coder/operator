@@ -79,7 +79,7 @@ export default function CommanderBrief({
         </div>
       </div>
 
-      <div className="grid gap-px bg-white/10 md:grid-cols-5">
+      <div className="grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-6">
         <Stat
           label="Active Missions"
           value={brief.activeMissionCount}
@@ -92,6 +92,10 @@ export default function CommanderBrief({
           label="Blocked"
           value={brief.blockedTaskCount}
         />
+        <Stat
+  label="Active Risks"
+  value={brief.activeRiskCount}
+/>
         <Stat
           label="Overdue"
           value={brief.overdueTaskCount}
