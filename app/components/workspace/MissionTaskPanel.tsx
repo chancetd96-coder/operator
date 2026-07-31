@@ -288,14 +288,11 @@ export default function MissionTaskPanel({
     TASK COMMENTS
     <textarea
       value={(task.comments ?? []).join("\n")}
-      onChange={(event) =>
-        onUpdateTask(task.id, {
-          comments: event.target.value
-            .split("\n")
-            .map((comment) => comment.trim())
-            .filter(Boolean),
-        })
-      }
+     onChange={(event) =>
+  onUpdateTask(task.id, {
+    comments: event.target.value.split("\n"),
+  })
+}
       rows={3}
       placeholder="Add updates, instructions, or context..."
       className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-sm leading-6 tracking-normal text-white/70 outline-none placeholder:text-white/20 focus:border-cyan-300/30"
