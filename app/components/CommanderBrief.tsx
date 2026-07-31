@@ -212,11 +212,11 @@ export default function CommanderBrief({
                     `/missions/${brief.recommendedTask?.missionId}`,
                   )
                 }
-                className="mt-4 w-full rounded-2xl border border-cyan-300/20 bg-black/20 p-5 text-left transition hover:bg-white/[0.05]"
-              >
-                <p className="text-xs text-cyan-300/70">
+                className="group mt-4 w-full rounded-3xl border border-cyan-300/20 bg-gradient-to-br from-cyan-400/[0.05] to-transparent p-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-cyan-300/40 hover:bg-cyan-300/[0.06] hover:shadow-[0_0_30px_rgba(103,232,249,0.08)]"
+                  >
+                <h4 className="mt-3 text-2xl font-semibold leading-tight transition-colors group-hover:text-cyan-100">
                   {brief.recommendedTask.missionTitle}
-                </p>
+                </h4>
 
                 <h4 className="mt-2 text-xl font-semibold">
                   {brief.recommendedTask.task.title}
@@ -245,7 +245,7 @@ export default function CommanderBrief({
                     (reason) => (
                       <span
                         key={reason}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/50"
+                       className="rounded-full border border-cyan-300/15 bg-cyan-300/[0.05] px-3 py-1 text-[11px] font-medium tracking-wide text-cyan-200/80"
                       >
                         {reason}
                       </span>
@@ -328,7 +328,7 @@ export default function CommanderBrief({
         {brief.nextMeeting.meeting.title}
       </h4>
 
-      <p className="mt-2 text-sm text-white/45">
+      <p className="mt-3 text-sm font-medium text-white/55">
         {new Intl.DateTimeFormat("en-US", {
           weekday: "short",
           month: "short",
