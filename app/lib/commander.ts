@@ -1,5 +1,6 @@
 import type {
   Mission,
+  MissionMeeting,
   MissionPriority,
   MissionTask,
 } from "@/lib/types/mission";
@@ -32,7 +33,12 @@ export type RankedTask = {
   score: number;
   reasons: string[];
 };
-
+export type CommanderMeeting = {
+  missionId: string;
+  missionTitle: string;
+  meeting: MissionMeeting;
+  scheduledAt: string;
+};
 export type MissionHealth = {
   missionId: string;
   missionTitle: string;
@@ -61,6 +67,7 @@ export type CommanderBrief = {
   priorityMission: Mission | null;
   priorityMissionSummary: string[];
   recommendedTask: RankedTask | null;
+  nextMeeting: CommanderMeeting | null;
   focusTasks: RankedTask[];
   alerts: CommanderAlert[];
   missionHealth: MissionHealth[];
@@ -540,6 +547,52 @@ function getExecutionStatus(
 
   return "On Track";
 }
+function getNextMeeting(
+  missions: Mission[],
+): CommanderMeeting | null {
+  const now = new Date();
+
+  const upcomingMeetings = missions
+    .flatMap((mission) =>
+      mission.meetings
+        .filter((meeting) => Boolean(meeting.date))
+        .map((meeting) => {
+          const scheduledAt = new Date(
+            `${meeting.date}T${meeting.time ?? "23:59"}:00`,
+          );
+
+          return {
+            missionId: mission.id,
+            missionTitle: mission.title,
+            meeting,
+            scheduledAt,
+          };
+        }),
+    )
+    .filter(
+      (item) =>
+        !Number.isNaN(item.scheduledAt.getTime()) &&
+        item.scheduledAt >= now,
+    )
+    .sort(
+      (a, b) =>
+        a.scheduledAt.getTime() -
+        b.scheduledAt.getTime(),
+    );
+
+  const nextMeeting = upcomingMeetings[0];
+
+  if (!nextMeeting) {
+    return null;
+  }
+
+  return {
+    missionId: nextMeeting.missionId,
+    missionTitle: nextMeeting.missionTitle,
+    meeting: nextMeeting.meeting,
+    scheduledAt: nextMeeting.scheduledAt.toISOString(),
+  };
+}
 export function generateCommanderBrief(
   missions: Mission[],
 ): CommanderBrief {
@@ -617,6 +670,7 @@ const operatorRecommendation =
     recommendedTask: rankedTasks[0] ?? null,
     criticalMissionCount,
   });
+  const nextMeeting = getNextMeeting(missions);
 return {
     generatedAt: new Date().toISOString(),
     activeMissionCount: missions.filter(
@@ -635,6 +689,7 @@ priorityMissionSummary: priorityMission
   ? buildMissionSummary(priorityMission)
   : [],
     recommendedTask: rankedTasks[0] ?? null,
+    nextMeeting,
     focusTasks: rankedTasks.slice(0, 3),
     alerts: getCommanderAlerts(missions).slice(0, 6),
    missionHealth: missions
