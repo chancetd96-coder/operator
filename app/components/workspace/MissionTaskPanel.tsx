@@ -122,16 +122,21 @@ export default function MissionTaskPanel({
                     type="checkbox"
                     aria-label={`Mark ${task.title} complete`}
                     checked={task.status === "Complete"}
-                    onChange={(event) =>
-                      onUpdateTask(task.id, {
-                        status: event.target.checked
-                          ? "Complete"
-                          : "Not Started",
-                        progress: event.target.checked
-                          ? 100
-                          : 0,
-                      })
-                    }
+                   onChange={(event) => {
+  const isComplete = event.target.checked;
+
+  onUpdateTask(task.id, {
+    status: isComplete
+      ? "Complete"
+      : (task.blockers ?? []).some(
+            (blocker) => blocker.trim().length > 0,
+          )
+        ? "Blocked"
+        : "Not Started",
+    progress: isComplete ? 100 : 0,
+    blockers: isComplete ? [] : task.blockers,
+  });
+}}
                     className="mt-1 h-5 w-5 shrink-0 accent-emerald-300"
                   />
 
@@ -252,21 +257,31 @@ export default function MissionTaskPanel({
                     max="100"
                     step="5"
                     value={task.progress}
-                    onChange={(event) => {
-                      const progress = Number(
-                        event.target.value,
-                      );
+                  onChange={(event) => {
+  const progress = Number(event.target.value);
 
-                      onUpdateTask(task.id, {
-                        progress,
-                        status:
-                          progress === 100
-                            ? "Complete"
-                            : progress > 0
-                              ? "In Progress"
-                              : "Not Started",
-                      });
-                    }}
+  const hasActiveBlocker = (
+    task.blockers ?? []
+  ).some(
+    (blocker) => blocker.trim().length > 0,
+  );
+
+  onUpdateTask(task.id, {
+    progress,
+    status:
+      progress === 100
+        ? "Complete"
+        : hasActiveBlocker
+          ? "Blocked"
+          : progress > 0
+            ? "In Progress"
+            : "Not Started",
+    blockers:
+      progress === 100
+        ? []
+        : task.blockers,
+  });
+}}
                     className="mt-4 w-full accent-cyan-300"
                   />
                 </label>
