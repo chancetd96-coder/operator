@@ -52,6 +52,7 @@ export type CommanderBrief = {
   blockedTaskCount: number;
   overdueTaskCount: number;
   overallProgress: number;
+  operatorRecommendation: string;
   priorityMission: Mission | null;
   priorityMissionSummary: string[];
   recommendedTask: RankedTask | null;
@@ -498,7 +499,43 @@ const blockedTaskCount = allTasks.filter(
   const rankedTasks = rankTasks(missions);
 const priorityMission =
   getCommanderRecommendation(missions);
+function generateOperatorRecommendation(
+  brief: {
+    blockedTaskCount: number;
+    overdueTaskCount: number;
+    recommendedTask: RankedTask | null;
+    criticalMissionCount: number;
+  },
+): string {
+  if (brief.criticalMissionCount > 0) {
+    return "Resolve the highest-priority critical mission before accepting additional work.";
+  }
 
+  if (brief.blockedTaskCount > 0) {
+    return "Clear active blockers before starting new tasks.";
+  }
+
+  if (brief.overdueTaskCount > 0) {
+    return "Complete overdue tasks to recover schedule.";
+  }
+
+  if (brief.recommendedTask) {
+    return `Execute "${brief.recommendedTask.task.title}" next.`;
+  }
+
+  return "Mission execution is on track.";
+}
+const criticalMissionCount = missions.filter(
+  (mission) =>
+    calculateMissionHealth(mission).status === "Critical",
+).length;
+const operatorRecommendation =
+  generateOperatorRecommendation({
+    blockedTaskCount,
+    overdueTaskCount,
+    recommendedTask: rankedTasks[0] ?? null,
+    criticalMissionCount,
+  });
 return {
     generatedAt: new Date().toISOString(),
     activeMissionCount: missions.filter(
@@ -506,6 +543,7 @@ return {
     ).length,
     totalTaskCount: allTasks.length,
     completedTaskCount,
+    operatorRecommendation,
     blockedTaskCount,
     overdueTaskCount,
     overallProgress,

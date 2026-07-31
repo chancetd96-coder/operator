@@ -167,6 +167,24 @@ export default function CommanderBrief({
                 <h4 className="mt-2 text-xl font-semibold">
                   {brief.recommendedTask.task.title}
                 </h4>
+{brief.recommendedTask.task.dueDate ? (
+  <p className="mt-2 text-sm text-white/45">
+    Due{" "}
+    {new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(
+      new Date(
+        `${brief.recommendedTask.task.dueDate}T00:00:00`,
+      ),
+    )}
+  </p>
+) : (
+  <p className="mt-2 text-sm text-white/30">
+    No due date assigned
+  </p>
+)}
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   {brief.recommendedTask.reasons.map(
