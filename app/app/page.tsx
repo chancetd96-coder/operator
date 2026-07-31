@@ -5,7 +5,6 @@ import {
   getMissionCount,
   getOverallProgress,
   getHighestPriorityMission,
-  getCriticalMissions,
 } from "@/lib/mission-engine";
 import CommanderBrief from "@/components/CommanderBrief";
 import { useEffect, useState } from "react";
@@ -150,8 +149,13 @@ setMissions(cloudMissions);
 const missionCount = getMissionCount(missions);
 const overallProgress = getOverallProgress(missions);
 const priorityMission = getHighestPriorityMission(missions);
-const criticalMissionCount = getCriticalMissions(missions).length;
+
 const commanderBrief = generateCommanderBrief(missions);
+
+const criticalMissionCount =
+  commanderBrief.missionHealth.filter(
+    (mission) => mission.status === "Critical",
+  ).length;
 
 
 const activeMission = selectedMission;
