@@ -8,15 +8,12 @@ import {
 } from "react";
 import { useParams, useRouter } from "next/navigation";
 import MissionMemoryPanel from "@/components/MissionMemoryPanel";
-import MissionTimelinePanel from "@/components/workspace/MissionTimelinePanel";
-import MissionHeader from "@/components/workspace/MissionHeader";
-import CommanderWorkspace from "@/components/workspace/CommanderWorkspace";
+import MissionTimeline from "@/components/MissionTimeline";
+import MissionOverviewCard from "@/components/workspace/MissionOverviewCard";
 import MissionTaskPanel from "@/components/workspace/MissionTaskPanel";
 import { MissionRepository } from "@/lib/repositories/missionRepository";
-import { buildMissionTimeline } from "@/lib/timeline/buildMissionTimeline";
-import { buildCommanderAssessment } from "@/lib/commander/buildCommanderAssessment";
 import { saveSelectedMissionId } from "@/lib/storage";
-import DocumentsWorkspace from "@/components/workspace/DocumentsWorkspace";
+
 import WorkspaceTabs, {
   type WorkspaceTab,
 } from "@/components/workspace/WorkspaceTabs";
@@ -25,10 +22,6 @@ import type {
   Mission,
   MissionTask,
 } from "@/lib/types/mission";
-
-import type {
-  CommanderPriorityAction,
-} from "@/lib/commander/types";
 
 function calculateMissionProgress(
   tasks: MissionTask[],
@@ -59,25 +52,7 @@ export default function MissionWorkspacePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
 const [activeTab, setActiveTab] =
-  useState<WorkspaceTab>("tasks");
-  const handleCommanderAction = (
-  action: CommanderPriorityAction,
-) => {
-  switch (action.type) {
-    case "task":
-    case "blocker":
-      setActiveTab("tasks");
-      break;
-
-    case "risk":
-      
-      break;
-
-    case "meeting":
-      setActiveTab("timeline");
-      break;
-  }
-};
+  useState<WorkspaceTab>("overview");
   const [mission, setMission] = useState<Mission | null>(
     null,
   );
@@ -178,14 +153,6 @@ useEffect(() => {
         (task) => task.status === "Complete",
       ).length ?? 0
     );
-  }, [mission]);
-
-  const timelineEvents = useMemo(() => {
-    if (!mission) {
-      return [];
-    }
-
-    return buildMissionTimeline(mission);
   }, [mission]);
 
   function updateMission(
@@ -402,28 +369,9 @@ useEffect(() => {
       </header>
 
       <div className="mx-auto max-w-7xl px-6 py-8 md:py-12">
-       <MissionHeader
-  mission={mission}
-  saveStatus={saveStatus}
-  lastSavedAt={lastSavedAt}
-/>
-{activeTab === "commander" ? (
-  <div className="mt-8">
-    <CommanderWorkspace
-  assessment={buildCommanderAssessment(mission)}
-  onActionSelected={handleCommanderAction}
-/>
-  </div>
-) : null}
-        <div className="mt-8">
-          <WorkspaceTabs
-            activeTab={activeTab}
-            onChange={setActiveTab}
-          />
-        </div>
+        <MissionOverviewCard mission={mission} />
 
-        {activeTab === "commander" ? (
-          <section className="mt-8 border-b border-white/10 pb-10">
+        <section className="border-b border-white/10 pb-10">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-4xl">
               <p className="text-sm tracking-[0.3em] text-cyan-300/70">
@@ -472,6 +420,21 @@ useEffect(() => {
                   }}
                 />
               </div>
+<WorkspaceTabs
+  activeTab={activeTab}
+  onChange={setActiveTab}
+/>
+{activeTab === "documents" ? (
+  <section className="mt-6 rounded-2xl border border-dashed border-white/10 p-8 text-sm text-white/40">
+    Documents workspace coming next.
+  </section>
+) : null}
+
+{activeTab === "commander" ? (
+  <section className="mt-6 rounded-2xl border border-dashed border-white/10 p-8 text-sm text-white/40">
+    Commander workspace coming next.
+  </section>
+) : null}
               <div className="mt-4 flex justify-between text-xs text-white/40">
                 <span>
                   {completedTaskCount} complete
@@ -482,11 +445,9 @@ useEffect(() => {
               </div>
             </div>
           </div>
-          </section>
-        ) : null}
+        </section>
 
-        {activeTab === "tasks" ? (
-          <div className="mt-8 grid gap-8 xl:grid-cols-[1.5fr_0.8fr]">
+        <div className="mt-8 grid gap-8 xl:grid-cols-[1.5fr_0.8fr]">
           <MissionTaskPanel
             tasks={mission.tasks}
             onAddTask={addTask}
@@ -649,35 +610,14 @@ useEffect(() => {
               </div>
             </section>
           </aside>
-          </div>
-        ) : null}
-
-        {activeTab === "memory" ? (
-          <div className="mt-8">
-            <MissionMemoryPanel missionId={mission.id} />
-          </div>
-        ) : null}
-
-        {activeTab === "timeline" ? (
-          <div className="mt-8">
-            <MissionTimelinePanel
-              events={timelineEvents}
-            />
-          </div>
-        ) : null}
-
-       {activeTab === "documents" ? (
-  <div className="mt-8">
-    <DocumentsWorkspace
-      resources={mission.resources}
-      onChange={(resources) =>
-        updateMission({ resources })
-      }
-    />
-  </div>
+        </div>
+       {activeTab === "memory" ? (
+  <MissionMemoryPanel missionId={mission.id} />
 ) : null}
 
-
+{activeTab === "timeline" ? (
+  <MissionTimeline mission={mission} />
+) : null}
       </div>
     </main>
   );

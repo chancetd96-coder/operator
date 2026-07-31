@@ -16,7 +16,7 @@ const TABS: Array<{
   id: WorkspaceTab;
   label: string;
 }> = [
-  { id: "commander", label: "Commander" },
+ // { id: "commander", label: "Commander" },
   { id: "tasks", label: "Tasks" },
   { id: "timeline", label: "Timeline" },
   { id: "memory", label: "Memory" },
