@@ -73,9 +73,15 @@ export default function CommanderBrief({
             </h3>
           </div>
 
-          <p className="text-xs tracking-[0.2em] text-white/30">
-            UPDATED {formatGeneratedAt(brief.generatedAt)}
-          </p>
+          <div className="flex flex-wrap items-center gap-3">
+  <span className="rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-3 py-1 text-xs font-medium tracking-[0.12em] text-cyan-200">
+    EXECUTION: {brief.executionStatus.toUpperCase()}
+  </span>
+
+  <p className="text-xs tracking-[0.2em] text-white/30">
+    UPDATED {formatGeneratedAt(brief.generatedAt)}
+  </p>
+</div>
         </div>
       </div>
 
