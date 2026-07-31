@@ -16,7 +16,20 @@ function formatGeneratedAt(value: string): string {
     minute: "2-digit",
   }).format(new Date(value));
 }
+function getExecutionStatusClasses(
+  status: "On Track" | "Needs Attention" | "Critical",
+): string {
+  switch (status) {
+    case "Critical":
+      return "border-red-400/30 bg-red-400/10 text-red-200";
 
+    case "Needs Attention":
+      return "border-amber-300/30 bg-amber-300/10 text-amber-100";
+
+    case "On Track":
+      return "border-emerald-300/30 bg-emerald-300/10 text-emerald-100";
+  }
+}
 export default function CommanderBrief({
   missions,
 }: CommanderBriefProps) {
@@ -74,9 +87,13 @@ export default function CommanderBrief({
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-  <span className="rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-3 py-1 text-xs font-medium tracking-[0.12em] text-cyan-200">
-    EXECUTION: {brief.executionStatus.toUpperCase()}
-  </span>
+<span
+  className={`rounded-full border px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] ${getExecutionStatusClasses(
+    brief.executionStatus,
+  )}`}
+>
+  EXECUTION: {brief.executionStatus.toUpperCase()}
+</span>
 
   <p className="text-xs tracking-[0.2em] text-white/30">
     UPDATED {formatGeneratedAt(brief.generatedAt)}
