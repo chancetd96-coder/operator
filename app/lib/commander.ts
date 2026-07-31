@@ -121,9 +121,11 @@ export function isTaskDueSoon(
 export function getBlockedTasks(
   missions: Mission[],
 ): RankedTask[] {
-  return rankTasks(missions).filter(
-    ({ task }) => task.status === "Blocked",
-  );
+return rankTasks(missions).filter(
+  ({ task }) =>
+    task.status === "Blocked" ||
+    getRecordedItems(task.blockers).length > 0,
+);
 }
 
 export function getOverdueTasks(
@@ -239,22 +241,31 @@ export function scoreMission(
     (task) => task.status !== "Complete",
   );
 
-  const blockedTasks = mission.tasks.filter(
-    (task) => task.status === "Blocked",
-  );
+const blockedTasks = mission.tasks.filter(
+  (task) =>
+    task.status === "Blocked" ||
+    getRecordedItems(task.blockers).length > 0,
+);
 
   const overdueTasks = mission.tasks.filter(
     isTaskOverdue,
   );
 
-  const unresolvedRisks = mission.risks.filter(
-    (risk) => !risk.resolved,
-  );
+const unresolvedMissionRisks = mission.risks.filter(
+  (risk) => !risk.resolved,
+);
+
+const taskRiskCount = mission.tasks.reduce(
+  (total, task) =>
+    total + getRecordedItems(task.risks).length,
+  0,
+);
 
   score += incompleteTasks.length * 2;
   score += blockedTasks.length * 8;
   score += overdueTasks.length * 12;
-  score += unresolvedRisks.length * 5;
+score += unresolvedMissionRisks.length * 5;
+score += taskRiskCount * 4;
 
   if (mission.progress === 0) {
     score += 3;
