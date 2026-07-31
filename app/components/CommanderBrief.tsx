@@ -103,31 +103,58 @@ export default function CommanderBrief({
       </div>
 
       <div className="grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-6">
-        <Stat
-          label="Active Missions"
-          value={brief.activeMissionCount}
-        />
-        <Stat
-          label="Total Tasks"
-          value={brief.totalTaskCount}
-        />
-        <Stat
-          label="Blocked"
-          value={brief.blockedTaskCount}
-        />
-        <Stat
-  label="Active Risks"
-  value={brief.activeRiskCount}
-/>
-        <Stat
-          label="Overdue"
-          value={brief.overdueTaskCount}
-        />
-        <Stat
-          label="Overall Progress"
-          value={`${brief.overallProgress}%`}
-        />
-      </div>
+  <Stat
+    label="Active Missions"
+    value={brief.activeMissionCount}
+  />
+
+  <Stat
+    label="Total Tasks"
+    value={brief.totalTaskCount}
+  />
+
+  <Stat
+    label="Blocked"
+    value={brief.blockedTaskCount}
+    tone={
+      brief.blockedTaskCount > 0
+        ? "critical"
+        : "default"
+    }
+  />
+
+  <Stat
+    label="Active Risks"
+    value={brief.activeRiskCount}
+    tone={
+      brief.activeRiskCount > 0
+        ? "warning"
+        : "default"
+    }
+  />
+
+  <Stat
+    label="Overdue"
+    value={brief.overdueTaskCount}
+    tone={
+      brief.overdueTaskCount > 0
+        ? "critical"
+        : "default"
+    }
+  />
+
+  <Stat
+    label="Overall Progress"
+    value={`${brief.overallProgress}%`}
+    tone={
+      brief.overallProgress >= 75
+        ? "positive"
+        : brief.overallProgress < 50
+          ? "warning"
+          : "default"
+    }
+  />
+</div>
 
       <div className="grid gap-6 p-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-6">
@@ -407,14 +434,30 @@ export default function CommanderBrief({
 function Stat({
   label,
   value,
+  tone = "default",
 }: {
   label: string;
   value: number | string;
+  tone?: "default" | "positive" | "warning" | "critical";
 }) {
+  const valueClasses = {
+    default: "text-white",
+    positive: "text-emerald-200",
+    warning: "text-amber-200",
+    critical: "text-red-200",
+  };
+
   return (
     <div className="bg-black/60 px-5 py-4">
-      <p className="text-xs text-white/35">{label}</p>
-      <p className="mt-2 text-2xl font-semibold">{value}</p>
+      <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-white/35">
+        {label}
+      </p>
+
+      <p
+        className={`mt-2 text-2xl font-semibold tabular-nums ${valueClasses[tone]}`}
+      >
+        {value}
+      </p>
     </div>
   );
 }
