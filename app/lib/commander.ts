@@ -53,6 +53,10 @@ export type CommanderBrief = {
   blockedTaskCount: number;
   overdueTaskCount: number;
   overallProgress: number;
+  executionStatus:
+  | "On Track"
+  | "Needs Attention"
+  | "Critical";
   operatorRecommendation: string;
   priorityMission: Mission | null;
   priorityMissionSummary: string[];
@@ -515,7 +519,27 @@ taskRisks.forEach((risk, index) => {
       alertPriority[a.type],
   );
 }
+function getExecutionStatus(
+  overallProgress: number,
+  blockedTaskCount: number,
+  overdueTaskCount: number,
+): "On Track" | "Needs Attention" | "Critical" {
+  if (
+    overdueTaskCount > 0 ||
+    blockedTaskCount >= 3
+  ) {
+    return "Critical";
+  }
 
+  if (
+    blockedTaskCount > 0 ||
+    overallProgress < 50
+  ) {
+    return "Needs Attention";
+  }
+
+  return "On Track";
+}
 export function generateCommanderBrief(
   missions: Mission[],
 ): CommanderBrief {
@@ -547,7 +571,12 @@ const activeRiskCount = countActiveRisks(missions);
             0,
           ) / missions.length,
         );
-
+const executionStatus =
+  getExecutionStatus(
+    overallProgress,
+    blockedTaskCount,
+    overdueTaskCount,
+  );
   const rankedTasks = rankTasks(missions);
 const priorityMission =
   getCommanderRecommendation(missions);
@@ -599,6 +628,7 @@ return {
     blockedTaskCount,
     overdueTaskCount,
     activeRiskCount,
+    executionStatus,
     overallProgress,
     priorityMission,
 priorityMissionSummary: priorityMission
@@ -610,7 +640,6 @@ priorityMissionSummary: priorityMission
    missionHealth: missions
   .map(calculateMissionHealth)
   .sort((a, b) => a.score - b.score),
-      
     };
   function buildMissionSummary(mission: Mission): string[] {
   const blockers = mission.tasks.filter(
