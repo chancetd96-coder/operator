@@ -6,6 +6,16 @@ type DailyBriefingProps = {
   blockedTaskCount: number;
   activeRiskCount: number;
   recommendedTask: string | null;
+  executionStatus:
+    | "On Track"
+    | "Needs Attention"
+    | "Critical";
+  nextMeeting: {
+    title: string;
+    missionTitle: string;
+    scheduledAt: string;
+    hasTime: boolean;
+  } | null;
 };
 
 export default function DailyBriefing({
@@ -16,6 +26,8 @@ export default function DailyBriefing({
   blockedTaskCount,
   activeRiskCount,
   recommendedTask,
+  executionStatus,
+  nextMeeting,
 }: DailyBriefingProps) {
   return (
     <div className="mb-8 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
@@ -43,7 +55,41 @@ export default function DailyBriefing({
   <p className="text-xs font-semibold tracking-[0.2em] text-cyan-300/70">
     RECOMMENDED NEXT ACTION
   </p>
+<div className="mt-5 rounded-xl border border-white/10 bg-black/20 p-4">
+  <p className="text-xs font-semibold tracking-[0.2em] text-white/40">
+    NEXT COORDINATION EVENT
+  </p>
 
+  {nextMeeting ? (
+    <>
+      <p className="mt-2 text-sm font-medium text-white/80">
+        {nextMeeting.title}
+      </p>
+
+      <p className="mt-1 text-xs text-white/40">
+        {nextMeeting.missionTitle}
+      </p>
+
+      <p className="mt-2 text-sm text-white/55">
+        {new Intl.DateTimeFormat("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          hour: nextMeeting.hasTime
+            ? "numeric"
+            : undefined,
+          minute: nextMeeting.hasTime
+            ? "2-digit"
+            : undefined,
+        }).format(new Date(nextMeeting.scheduledAt))}
+      </p>
+    </>
+  ) : (
+    <p className="mt-2 text-sm text-white/40">
+      No upcoming meetings scheduled.
+    </p>
+  )}
+</div>
   <p className="mt-2 text-sm leading-6 text-white/75">
     {recommendedTask ?? "No incomplete task requires attention."}
   </p>

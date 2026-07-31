@@ -289,16 +289,25 @@ if (!hydrated) {
             </div>
 <CommanderBrief missions={missions} />
 <DailyBriefing
-  missionCount={missionCount}
-  priorityMission={priorityMission?.title ?? null}
-  overallProgress={overallProgress}
-  criticalMissionCount={criticalMissionCount}
-  blockedTaskCount={commanderBrief.blockedTaskCount}
-  activeRiskCount={commanderBrief.activeRiskCount}
-  recommendedTask={
-    commanderBrief.recommendedTask?.task.title ?? null
-  }
-/>
+              missionCount={missionCount}
+              priorityMission={priorityMission?.title ?? null}
+              overallProgress={overallProgress}
+              criticalMissionCount={criticalMissionCount}
+              blockedTaskCount={commanderBrief.blockedTaskCount}
+              activeRiskCount={commanderBrief.activeRiskCount}
+              recommendedTask={commanderBrief.recommendedTask?.task.title ?? null}
+              executionStatus={commanderBrief.executionStatus}
+              nextMeeting={
+                commanderBrief.nextMeeting
+                  ? {
+                      title: commanderBrief.nextMeeting.meeting.title,
+                      missionTitle: commanderBrief.nextMeeting.missionTitle,
+                      scheduledAt: commanderBrief.nextMeeting.scheduledAt,
+                      hasTime: Boolean(commanderBrief.nextMeeting.meeting.time),
+                    }
+                  : null
+              }
+            />
 
 <MissionInput
   mission={mission}
