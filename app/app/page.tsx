@@ -222,35 +222,60 @@ if (!hydrated) {
             {missions.map((item) => (
 
               <button
+  key={item.id}
+  type="button"
+  onClick={() => {
+    setSelectedMission(item);
+    router.push(`/missions/${item.id}`);
+  }}
+  className={`group relative w-full overflow-hidden rounded-2xl border p-4 text-left transition-all duration-200 ${
+    selectedMission?.id === item.id
+      ? "border-cyan-300/30 bg-cyan-300/[0.07] shadow-[0_0_24px_rgba(103,232,249,0.05)]"
+      : "border-white/10 bg-white/[0.035] hover:-translate-y-0.5 hover:border-cyan-300/20 hover:bg-white/[0.07]"
+  }`}
+>
+  <div
+    className={`pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-cyan-300 transition-opacity ${
+      selectedMission?.id === item.id
+        ? "opacity-80"
+        : "opacity-0 group-hover:opacity-40"
+    }`}
+  />
 
-                key={item.id}
+  <div className="flex items-start justify-between gap-3">
+    <div className="min-w-0">
+      <p className="truncate text-sm font-semibold text-white/90 transition-colors group-hover:text-cyan-100">
+        {item.title}
+      </p>
 
-                onClick={() => {
-                  setSelectedMission(item);
-                  router.push(`/missions/${item.id}`);
-                 }}
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <span className="rounded-full border border-white/10 bg-black/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/45">
+          {item.status}
+        </span>
 
-                className={`w-full rounded-xl border p-4 text-left transition ${
-                  selectedMission?.id === item.id
-                    ? "border-white/30 bg-white/10"
-                    : "border-white/10 bg-white/5 hover:bg-white/10"
-                 }`}
+        <span className="text-[11px] font-medium text-white/35">
+          {item.priority ?? "Normal"} priority
+        </span>
+      </div>
+    </div>
 
-              >
+    <span className="shrink-0 text-sm font-semibold tabular-nums text-white/65">
+      {item.progress}%
+    </span>
+  </div>
 
-                <div className="text-sm font-semibold">{item.title}</div>
-
-                <div className="mt-2 flex items-center justify-between text-xs text-white/40">
-                  <div className="flex items-center gap-2">
-                    <span>{item.status}</span>
-                    <span>•</span>
-                    <span>{item.priority ?? "Normal"}</span>
-                  </div>
-
-                  <span>{item.progress}%</span>
-                </div>
-
-              </button>
+  <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/10">
+    <div
+      className="h-full rounded-full bg-cyan-300/70 transition-all duration-300"
+      style={{
+        width: `${Math.min(
+          100,
+          Math.max(0, item.progress),
+        )}%`,
+      }}
+    />
+  </div>
+</button>
 
             ))}
 
