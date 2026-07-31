@@ -59,7 +59,7 @@ export default function MissionWorkspacePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
 const [activeTab, setActiveTab] =
-  useState<WorkspaceTab>("overview");
+  useState<WorkspaceTab>("commander");
   const handleCommanderAction = (
   action: CommanderPriorityAction,
 ) => {
@@ -70,7 +70,7 @@ const [activeTab, setActiveTab] =
       break;
 
     case "risk":
-      setActiveTab("overview");
+      setActiveTab("commander");
       break;
 
     case "meeting":
@@ -411,7 +411,7 @@ useEffect(() => {
           />
         </div>
 
-        {activeTab === "overview" ? (
+        {activeTab === "commander" ? (
           <section className="mt-8 border-b border-white/10 pb-10">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-4xl">

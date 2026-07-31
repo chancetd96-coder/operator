@@ -1,12 +1,11 @@
 "use client";
 
 export type WorkspaceTab =
-  | "overview"
+  | "commander"
   | "tasks"
   | "timeline"
   | "memory"
-  | "documents"
-  | "commander";
+  | "documents";
 
 type WorkspaceTabsProps = {
   activeTab: WorkspaceTab;
@@ -17,12 +16,12 @@ const TABS: Array<{
   id: WorkspaceTab;
   label: string;
 }> = [
-  { id: "overview", label: "Overview" },
+  { id: "commander", label: "Commander" },
   { id: "tasks", label: "Tasks" },
   { id: "timeline", label: "Timeline" },
   { id: "memory", label: "Memory" },
   { id: "documents", label: "Documents" },
-  { id: "commander", label: "Commander" },
+
 ];
 
 export default function WorkspaceTabs({
