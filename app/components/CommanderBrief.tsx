@@ -104,10 +104,51 @@ export default function CommanderBrief({
 
       <div className="grid gap-6 p-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-6">
-          <section>
-            <p className="text-xs tracking-[0.25em] text-white/40">
-              RECOMMENDED NEXT ACTION
+  {brief.priorityMission ? (
+  <section className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.035] p-5">
+    <p className="text-xs tracking-[0.25em] text-cyan-300/70">
+      PRIORITY MISSION
+    </p>
+
+    <button
+      type="button"
+      onClick={() =>
+        router.push(
+          `/missions/${brief.priorityMission?.id}`,
+        )
+      }
+      className="mt-3 w-full text-left"
+    >
+      <h4 className="text-xl font-semibold">
+        {brief.priorityMission.title}
+      </h4>
+    </button>
+
+    {brief.priorityMissionSummary.length > 0 ? (
+      <div className="mt-4 border-t border-white/10 pt-4">
+        <p className="text-xs font-medium tracking-[0.16em] text-white/35">
+          WHY THIS MISSION
+        </p>
+
+        <div className="mt-3 space-y-2">
+          {brief.priorityMissionSummary.map((item) => (
+            <p
+              key={item}
+              className="text-sm text-white/55"
+            >
+              • {item}
             </p>
+          ))}
+        </div>
+      </div>
+    ) : null}
+  </section>
+) : null}
+
+  <section>
+    <p className="text-xs tracking-[0.25em] text-white/40">
+      RECOMMENDED NEXT ACTION
+    </p>
 
             {brief.recommendedTask ? (
               <button

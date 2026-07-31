@@ -53,6 +53,7 @@ export type CommanderBrief = {
   overdueTaskCount: number;
   overallProgress: number;
   priorityMission: Mission | null;
+  priorityMissionSummary: string[];
   recommendedTask: RankedTask | null;
   focusTasks: RankedTask[];
   alerts: CommanderAlert[];
@@ -495,8 +496,10 @@ const blockedTaskCount = allTasks.filter(
         );
 
   const rankedTasks = rankTasks(missions);
+const priorityMission =
+  getCommanderRecommendation(missions);
 
-  return {
+return {
     generatedAt: new Date().toISOString(),
     activeMissionCount: missions.filter(
       (mission) => mission.progress < 100,
@@ -506,13 +509,65 @@ const blockedTaskCount = allTasks.filter(
     blockedTaskCount,
     overdueTaskCount,
     overallProgress,
-    priorityMission:
-      getCommanderRecommendation(missions),
+    priorityMission,
+priorityMissionSummary: priorityMission
+  ? buildMissionSummary(priorityMission)
+  : [],
     recommendedTask: rankedTasks[0] ?? null,
     focusTasks: rankedTasks.slice(0, 3),
     alerts: getCommanderAlerts(missions).slice(0, 6),
     missionHealth: missions
       .map(calculateMissionHealth)
       .sort((a, b) => a.score - b.score),
-  };
+    };
+  function buildMissionSummary(mission: Mission): string[] {
+  const blockers = mission.tasks.filter(
+    (task) =>
+      (task.blockers ?? []).some(
+        (b) => b.trim().length > 0,
+      ),
+  ).length;
+
+  const risks =
+    mission.risks.filter((r) => !r.resolved).length +
+    mission.tasks.reduce(
+      (total, task) =>
+        total +
+        (task.risks ?? []).filter(
+          (risk) => risk.trim().length > 0,
+        ).length,
+      0,
+    );
+
+  const overdue = mission.tasks.filter(
+    isTaskOverdue,
+  ).length;
+
+  const nextDue = mission.tasks
+    .filter((task) => task.dueDate)
+    .sort(
+      (a, b) =>
+        new Date(a.dueDate!).getTime() -
+        new Date(b.dueDate!).getTime(),
+    )[0];
+
+  const summary: string[] = [];
+
+  if (blockers)
+    summary.push(`${blockers} active blocker${blockers > 1 ? "s" : ""}`);
+
+  if (risks)
+    summary.push(`${risks} active risk${risks > 1 ? "s" : ""}`);
+
+  if (overdue)
+    summary.push(`${overdue} overdue task${overdue > 1 ? "s" : ""}`);
+
+  summary.push(`${mission.progress}% complete`);
+
+  if (nextDue) {
+    summary.push(`Next due: ${nextDue.title}`);
+  }
+
+  return summary;
+}
 }
