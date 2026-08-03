@@ -13,6 +13,7 @@ import {
   saveSelectedMissionId,
 } from "@/lib/storage";
 import { generateCommanderBrief } from "@/lib/commander";
+import { buildDemoEnvironment } from "@/lib/demo/demoEnvironment";
 import { MissionRepository } from "@/lib/repositories/missionRepository";
 import type { Mission } from "@/lib/types/mission";
 import MissionDashboardCard from "@/components/MissionDashboardCard";
@@ -27,7 +28,9 @@ export default function Home() {const router = useRouter();
  const [loading, setLoading] = useState(false);
  const [error, setError] = useState("");
  const [hydrated, setHydrated] = useState(false);
-
+const [demoStatus, setDemoStatus] = useState<
+  "idle" | "loading" | "loaded" | "error"
+>("idle");
 useEffect(() => {
   async function hydrate() {
     const cloudMissions = await MissionRepository.getAll();
@@ -145,7 +148,62 @@ setMissions(cloudMissions);
     setLoading(false);
   }
 }
+async function loadDemoEnvironment() {
+  const confirmed = window.confirm(
+    "Load the Operator demo environment? This will replace the current active mission portfolio in this browser.",
+  );
 
+  if (!confirmed) {
+    return;
+  }
+
+  setDemoStatus("loading");
+  setError("");
+
+  try {
+    const demoMissions = buildDemoEnvironment();
+
+    const existingMissions =
+      await MissionRepository.getAll();
+
+    for (const existingMission of existingMissions) {
+      MissionRepository.deleteMission(
+        existingMission.id,
+      );
+    }
+
+    for (const demoMission of demoMissions) {
+      await MissionRepository.save(demoMission);
+    }
+
+    const refreshedMissions =
+      await MissionRepository.getAll();
+
+    const firstMission =
+      refreshedMissions[0] ?? null;
+
+    setMissions(refreshedMissions);
+    setSelectedMission(firstMission);
+
+    if (firstMission) {
+      MissionRepository.setActiveMission(
+        firstMission.id,
+      );
+    }
+
+    setDemoStatus("loaded");
+  } catch (error) {
+    console.error(
+      "Failed to load demo environment:",
+      error,
+    );
+
+    setDemoStatus("error");
+    setError(
+      "Operator could not load the demo environment.",
+    );
+  }
+}
 const missionCount = getMissionCount(missions);
 const overallProgress = getOverallProgress(missions);
 const priorityMission = getHighestPriorityMission(missions);
@@ -290,7 +348,7 @@ if (!hydrated) {
 
           <div className="mx-auto max-w-6xl">
 
-           <div className="mb-8">
+<div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
   <div className="flex items-center gap-3">
     <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-300/20 bg-cyan-300/[0.06] text-lg">
       ⌘
@@ -306,6 +364,17 @@ if (!hydrated) {
       </h1>
     </div>
   </div>
+
+  <button
+    type="button"
+    onClick={() => void loadDemoEnvironment()}
+    disabled={demoStatus === "loading"}
+    className="w-fit rounded-full border border-cyan-300/25 bg-cyan-300/[0.06] px-5 py-2.5 text-sm font-semibold text-cyan-100 transition hover:border-cyan-300/45 hover:bg-cyan-300/[0.1] disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    {demoStatus === "loading"
+      ? "Loading Demo..."
+      : "Load Demo Environment"}
+  </button>
 </div>
 <CommanderBrief missions={missions} />
 <DailyBriefing
