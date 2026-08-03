@@ -6,6 +6,7 @@ import OperatorHeroVisual from "@/components/site/OperatorHeroVisual";
 import OrganizationScale from "@/components/site/OrganizationScale";
 import WhyOperatorExists from "@/components/site/WhyOperatorExists";
 import HumanCommand from "@/components/site/HumanCommand";
+import LiveProductProof from "@/components/site/LiveProductProof";
 import BuiltForOperations from "@/components/operator/BuiltForOperations";
 import OperationalPictureVisual from "@/components/site/OperationalPictureVisual";
 import PublicHeader from "@/components/site/PublicHeader";
@@ -239,6 +240,7 @@ export default function LandingPage() {
       <MissionControlPreview />
     </div>
   </div>
+  <LiveProductProof />
 </section>
       <section
   id="scale"

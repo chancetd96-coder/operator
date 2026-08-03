@@ -33,6 +33,10 @@ const navigationItems = [
   href: "#product",
 },
 {
+  label: "Live Product",
+  href: "#product-proof",
+},
+{
   label: "Scale",
   href: "#scale",
 },
