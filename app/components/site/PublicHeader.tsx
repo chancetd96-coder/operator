@@ -12,6 +12,10 @@ const navigationItems = [
   label: "Execution Gap",
   href: "#execution-gap",
 },
+{
+  label: "Why We Exist",
+  href: "#why-we-exist",
+},
   {
     label: "Operator Loop",
     href: "#operator-loop",

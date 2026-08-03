@@ -4,7 +4,7 @@ import MissionControlPreview from "@/components/site/MissionControlPreview";
 import OperatorLoopVisual from "@/components/site/OperatorLoopVisual";
 import OperatorHeroVisual from "@/components/site/OperatorHeroVisual";
 import OrganizationScale from "@/components/site/OrganizationScale";
-import OperatorCapabilities from "@/components/site/OperatorCapabilities";
+import WhyOperatorExists from "@/components/site/WhyOperatorExists";
 import BuiltForOperations from "@/components/operator/BuiltForOperations";
 import OperationalPictureVisual from "@/components/site/OperationalPictureVisual";
 import PublicHeader from "@/components/site/PublicHeader";
@@ -114,6 +114,7 @@ export default function LandingPage() {
     </div>
   </div>
 </section>
+<WhyOperatorExists />
       <section
   id="operator-loop"
   className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
@@ -188,10 +189,11 @@ export default function LandingPage() {
     </div>
 
     <div className="mt-14 sm:mt-20">
-      <OperatorCapabilities />
+      
     </div>
   </div>
 </section>
+<BuiltForOperations />
 <section
   id="product"
   className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
