@@ -96,9 +96,13 @@ export interface Mission {
 
   startedAt?: string;
 
-  completedAt?: string;
+completedAt?: string;
 
-  dueDate?: string;
+archivedAt?: string;
+
+archiveExpiresAt?: string;
+
+dueDate?: string;
 
   color?: string;
 

@@ -155,8 +155,12 @@ function normalizeMission(
     meetings: Array.isArray(mission.meetings)
       ? mission.meetings
       : [],
-    createdAt: mission.createdAt ?? now,
-    updatedAt: mission.updatedAt ?? now,
+   createdAt: mission.createdAt ?? now,
+updatedAt: mission.updatedAt ?? now,
+startedAt: mission.startedAt,
+completedAt: mission.completedAt,
+archivedAt: mission.archivedAt,
+archiveExpiresAt: mission.archiveExpiresAt,
   };
 }
 
