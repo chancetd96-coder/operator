@@ -16,6 +16,35 @@ function formatGeneratedAt(value: string): string {
     minute: "2-digit",
   }).format(new Date(value));
 }
+function getRecommendationUrgency(
+  score: number,
+): {
+  label: "IMMEDIATE" | "HIGH" | "ROUTINE";
+  className: string;
+} {
+  if (score >= 35) {
+    return {
+      label: "IMMEDIATE",
+      className:
+        "border-red-300/25 bg-red-300/[0.08] text-red-200",
+    };
+  }
+
+  if (score >= 20) {
+    return {
+      label: "HIGH",
+      className:
+        "border-amber-300/25 bg-amber-300/[0.08] text-amber-200",
+    };
+  }
+
+  return {
+    label: "ROUTINE",
+    className:
+      "border-cyan-300/20 bg-cyan-300/[0.06] text-cyan-100",
+  };
+}
+
 function getExecutionStatusClasses(
   status: "On Track" | "Needs Attention" | "Critical",
 ): string {
@@ -39,7 +68,12 @@ export default function CommanderBrief({
     () => generateCommanderBrief(missions),
     [missions],
   );
-
+const recommendationUrgency =
+  brief.recommendedTask
+    ? getRecommendationUrgency(
+        brief.recommendedTask.score,
+      )
+    : null;
   const healthCounts = brief.missionHealth.reduce(
     (counts, mission) => {
       counts[mission.status] += 1;
@@ -214,13 +248,23 @@ export default function CommanderBrief({
                 }
                 className="group mt-4 w-full rounded-3xl border border-cyan-300/20 bg-gradient-to-br from-cyan-400/[0.05] to-transparent p-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-cyan-300/40 hover:bg-cyan-300/[0.06] hover:shadow-[0_0_30px_rgba(103,232,249,0.08)]"
                   >
-                <h4 className="mt-3 text-2xl font-semibold leading-tight transition-colors group-hover:text-cyan-100">
-                  {brief.recommendedTask.missionTitle}
-                </h4>
+               <div className="flex items-center justify-between gap-4">
+  <p className="text-xs text-cyan-300/70">
+    {brief.recommendedTask.missionTitle}
+  </p>
 
-                <h4 className="mt-2 text-xl font-semibold">
-                  {brief.recommendedTask.task.title}
-                </h4>
+  {recommendationUrgency ? (
+    <span
+      className={`rounded-full border px-2.5 py-1 text-[9px] font-semibold tracking-[0.16em] ${recommendationUrgency.className}`}
+    >
+      {recommendationUrgency.label}
+    </span>
+  ) : null}
+</div>
+
+<h4 className="mt-3 text-xl font-semibold">
+  {brief.recommendedTask.task.title}
+</h4>
 {brief.recommendedTask.task.dueDate ? (
   <p className="mt-2 text-sm text-white/45">
     Due{" "}
@@ -252,6 +296,15 @@ export default function CommanderBrief({
                     ),
                   )}
                 </div>
+                <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+  <span className="text-[10px] font-semibold tracking-[0.16em] text-white/30">
+    OPERATOR SELECTED THIS ACTION
+  </span>
+
+  <span className="text-xs font-semibold text-cyan-200">
+    Open Mission →
+  </span>
+</div>
               </button>
             ) : (
               <p className="mt-4 text-sm text-white/40">
