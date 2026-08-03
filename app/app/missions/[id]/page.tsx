@@ -381,7 +381,7 @@ function handleArchiveMission(): void {
 
           <button
             type="button"
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/mission-control")}
             className="mt-8 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-medium transition hover:bg-white/15"
           >
             Return to Mission Control
@@ -397,7 +397,7 @@ function handleArchiveMission(): void {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-5">
           <button
             type="button"
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/mission-control")}
             className="text-sm text-white/50 transition hover:text-white"
           >
             ← Mission Control
