@@ -7,6 +7,7 @@ interface MissionHeaderProps {
   saveStatus: "idle" | "saving" | "saved" | "error";
   lastSavedAt: Date | null;
   onCompleteMission: () => void;
+  onArchiveMission: () => void;
 }
 
 function formatSaveStatus(
@@ -42,6 +43,7 @@ export default function MissionHeader({
   saveStatus,
   lastSavedAt,
     onCompleteMission,
+    onArchiveMission,
 }: MissionHeaderProps) {
   return (
     <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
@@ -122,19 +124,80 @@ export default function MissionHeader({
 
 {mission.status === "complete" &&
 !mission.archivedAt ? (
-  <div className="mt-5 rounded-xl border border-emerald-300/20 bg-emerald-300/[0.05] px-4 py-3">
-    <p className="text-xs font-semibold tracking-[0.16em] text-emerald-200/80">
-      MISSION COMPLETE
+ <div className="mt-5 space-y-3">
+
+    <div className="rounded-xl border border-emerald-300/20 bg-emerald-300/[0.05] px-4 py-3">
+
+      <p className="text-xs font-semibold tracking-[0.16em] text-emerald-200/80">
+
+        MISSION COMPLETE
+
+      </p>
+
+      {mission.completedAt ? (
+
+        <p className="mt-2 text-xs text-white/40">
+
+          Completed{" "}
+
+          {new Intl.DateTimeFormat("en-US", {
+
+            month: "short",
+
+            day: "numeric",
+
+            year: "numeric",
+
+          }).format(new Date(mission.completedAt))}
+
+        </p>
+
+      ) : null}
+
+    </div>
+
+    <button
+
+      type="button"
+
+      onClick={onArchiveMission}
+
+      className="w-full rounded-xl border border-white/15 bg-white/[0.05] px-4 py-3 text-sm font-semibold text-white/70 transition hover:border-cyan-300/30 hover:bg-cyan-300/[0.06] hover:text-white"
+
+    >
+
+      Archive Mission
+
+    </button>
+
+  </div>
+
+) : null}
+{mission.archivedAt ? (
+  <div className="mt-5 rounded-xl border border-amber-300/20 bg-amber-300/[0.05] px-4 py-3">
+    <p className="text-xs font-semibold tracking-[0.16em] text-amber-200/80">
+      MISSION ARCHIVED
     </p>
 
-    {mission.completedAt ? (
-      <p className="mt-2 text-xs text-white/40">
-        Completed{" "}
+    <p className="mt-2 text-xs text-white/40">
+      Archived{" "}
+      {new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }).format(new Date(mission.archivedAt))}
+    </p>
+
+    {mission.archiveExpiresAt ? (
+      <p className="mt-1 text-xs text-white/30">
+        Retained until{" "}
         {new Intl.DateTimeFormat("en-US", {
           month: "short",
           day: "numeric",
           year: "numeric",
-        }).format(new Date(mission.completedAt))}
+        }).format(
+          new Date(mission.archiveExpiresAt),
+        )}
       </p>
     ) : null}
   </div>

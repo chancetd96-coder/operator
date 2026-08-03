@@ -228,6 +228,31 @@ function handleCompleteMission(): void {
   setLastSavedAt(new Date());
 }
 
+function handleArchiveMission(): void {
+  if (!mission) {
+    return;
+  }
+
+  const confirmed = window.confirm(
+    "Archive this mission? Operator will remove it from active operations and preserve the full record for one year.",
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const archivedMission =
+    MissionRepository.archiveMission(mission.id);
+
+  if (!archivedMission) {
+    setSaveStatus("error");
+    return;
+  }
+
+  setMission(archivedMission);
+  setSaveStatus("saved");
+  setLastSavedAt(new Date());
+}
   function updateTask(
     taskId: string,
     changes: Partial<MissionTask>,
@@ -428,11 +453,12 @@ function handleCompleteMission(): void {
       </header>
 
       <div className="mx-auto max-w-7xl px-6 py-8 md:py-12">
-       <MissionHeader
+<MissionHeader
   mission={mission}
   saveStatus={saveStatus}
   lastSavedAt={lastSavedAt}
   onCompleteMission={handleCompleteMission}
+  onArchiveMission={handleArchiveMission}
 />
 {activeTab === "commander" ? (
   <div className="mt-8">
