@@ -6,7 +6,7 @@ import OperatorHeroVisual from "@/components/site/OperatorHeroVisual";
 import OrganizationScale from "@/components/site/OrganizationScale";
 import WhyOperatorExists from "@/components/site/WhyOperatorExists";
 import HumanCommand from "@/components/site/HumanCommand";
-import LiveProductProof from "@/components/site/LiveProductProof";
+
 import Reveal from "@/components/site/Reveal";
 import OperationalExperience from "@/components/site/OperationalExperience";
 import BuiltForOperations from "@/components/operator/BuiltForOperations";
@@ -241,7 +241,7 @@ export default function LandingPage() {
           href="/mission-control"
           className="mt-7 inline-flex items-center gap-3 text-sm font-semibold text-cyan-200 transition hover:text-white"
         >
-          Launch the live product
+          Explore Mission Control
           <span aria-hidden="true">→</span>
         </Link>
       </div>
@@ -251,9 +251,7 @@ export default function LandingPage() {
       <MissionControlPreview />
     </div>
   </div>
-  <Reveal>
-  <LiveProductProof />
-  </Reveal>
+ 
 </section>
       <section
   id="scale"
