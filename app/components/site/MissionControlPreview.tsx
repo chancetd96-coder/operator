@@ -167,11 +167,11 @@ function TimelinePreview() {
 
   return (
     <div className="relative min-h-[340px] overflow-hidden rounded-2xl border border-white/10 bg-black/25 p-5 sm:p-7">
-      <div className="absolute bottom-16 left-8 right-8 h-px bg-white/10" />
+     <div className="absolute bottom-16 left-8 right-8 hidden h-px bg-white/10 sm:block" />
 
-      <div className="absolute bottom-16 left-8 right-8 h-px origin-left scale-x-[0.72] bg-cyan-300/60 shadow-[0_0_18px_rgba(103,232,249,0.2)]" />
+      <div className="absolute bottom-16 left-8 right-8 hidden h-px origin-left scale-x-[0.72] bg-cyan-300/60 shadow-[0_0_18px_rgba(103,232,249,0.2)] sm:block" />
 
-      <div className="grid min-h-[260px] grid-cols-2 gap-4 sm:grid-cols-4">
+     <div className="grid min-h-[260px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {events.map((event, index) => (
           <div
             key={event.title}
@@ -195,8 +195,8 @@ function TimelinePreview() {
               </p>
             </article>
 
-            <div
-              className="absolute bottom-[-3.05rem] left-1/2 h-3 w-3 -translate-x-1/2 rounded-full border border-cyan-200/50 bg-[#050707]"
+           <div
+  className="absolute bottom-[-3.05rem] left-1/2 hidden h-3 w-3 -translate-x-1/2 rounded-full border border-cyan-200/50 bg-[#050707] sm:block"
               style={{
                 opacity:
                   Number.parseInt(event.position) <= 72
@@ -396,7 +396,7 @@ export default function MissionControlPreview() {
   return (
     <div className="grid gap-8 xl:grid-cols-[0.72fr_1.28fr] xl:gap-12">
       <div>
-        <div className="space-y-2">
+        <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-3 xl:mx-0 xl:block xl:space-y-2 xl:overflow-visible xl:px-0 xl:pb-0">
           {previewViews.map((view) => {
             const isActive = activeView === view.id;
 
@@ -405,7 +405,7 @@ export default function MissionControlPreview() {
                 key={view.id}
                 type="button"
                 onClick={() => setActiveView(view.id)}
-                className={`w-full rounded-2xl border p-5 text-left transition duration-300 ${
+               className={`min-w-[260px] flex-1 rounded-2xl border p-5 text-left transition duration-300 xl:w-full xl:min-w-0 ${
                   isActive
                     ? "border-cyan-300/25 bg-cyan-300/[0.055]"
                     : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
@@ -452,16 +452,16 @@ export default function MissionControlPreview() {
             <span className="h-2 w-2 rounded-full bg-white/[0.06]" />
           </div>
 
-          <p className="text-[9px] font-semibold tracking-[0.2em] text-white/25">
-            OPERATOR / MISSION CONTROL
-          </p>
+          <p className="hidden text-[9px] font-semibold tracking-[0.2em] text-white/25 sm:block">
+  OPERATOR / MISSION CONTROL
+</p>
 
           <span className="text-[9px] text-cyan-300/45">
             LIVE
           </span>
         </div>
 
-        <div className="min-h-[470px] p-4 sm:p-6">
+        <div className="min-h-[390px] p-4 sm:min-h-[470px] sm:p-6">
           <div
             key={activeView}
             className="animate-[preview-fade_350ms_ease-out]"
