@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import OperatorLoopVisual from "@/components/site/OperatorLoopVisual";
 import OperatorHeroVisual from "@/components/site/OperatorHeroVisual";
 import OperationalPictureVisual from "@/components/site/OperationalPictureVisual";
 import PublicHeader from "@/components/site/PublicHeader";
@@ -70,7 +70,7 @@ export default function LandingPage() {
       </section>
 
       <section
-  id="operator-loop"
+  id="execution-gap"
   className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
 >
   <div className="pointer-events-none absolute inset-0">
@@ -109,7 +109,50 @@ export default function LandingPage() {
     </div>
   </div>
 </section>
-      <div id="capabilities" />
+      <section
+  id="operator-loop"
+  className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
+>
+  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="absolute right-[-12rem] top-1/4 h-[34rem] w-[34rem] rounded-full bg-cyan-300/[0.025] blur-[130px]" />
+  </div>
+
+  <div className="relative mx-auto max-w-7xl">
+    <div className="grid gap-14 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+      <div className="lg:sticky lg:top-32 lg:self-start">
+        <p className="text-[11px] font-semibold tracking-[0.3em] text-cyan-300/60">
+          THE OPERATOR LOOP
+        </p>
+
+        <h2 className="mt-6 text-4xl font-semibold leading-[0.98] tracking-[-0.04em] sm:text-6xl">
+          Execution is not a sequence.
+          <br />
+          It is a continuous loop.
+        </h2>
+
+        <p className="mt-7 max-w-xl text-base leading-8 text-white/45 sm:text-lg">
+          Operator maintains continuity from the moment intent
+          is issued through planning, synchronization,
+          execution, decision, and organizational learning.
+        </p>
+
+        <div className="mt-10 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.035] p-5">
+          <p className="text-[10px] font-semibold tracking-[0.2em] text-cyan-300/60">
+            HUMAN IN COMMAND
+          </p>
+
+          <p className="mt-3 text-sm leading-6 text-white/55">
+            Operator continuously monitors execution and
+            recommends action. Leaders retain authority,
+            judgment, and control.
+          </p>
+        </div>
+      </div>
+
+      <OperatorLoopVisual />
+    </div>
+  </div>
+</section>
       <div id="roadmap" />
     </main>
   );

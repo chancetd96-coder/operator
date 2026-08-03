@@ -9,6 +9,10 @@ const navigationItems = [
     href: "#mission",
   },
   {
+  label: "Execution Gap",
+  href: "#execution-gap",
+},
+  {
     label: "Operator Loop",
     href: "#operator-loop",
   },
@@ -125,7 +129,7 @@ export default function PublicHeader() {
                 </span>
 
                 <span className="text-xs tabular-nums text-white/25">
-                  0{index + 1}
+                 {String(index + 1).padStart(2, "0")}
                 </span>
               </Link>
             ))}
