@@ -15,7 +15,7 @@ import {
 import { generateCommanderBrief } from "@/lib/commander";
 import { MissionRepository } from "@/lib/repositories/missionRepository";
 import type { Mission } from "@/lib/types/mission";
-
+import MissionDashboardCard from "@/components/MissionDashboardCard";
 import Panel from "@/components/panel";
 import DailyBriefing from "@/components/DailyBriefing";
 import MissionInput from "@/components/MissionInput";
@@ -329,6 +329,48 @@ if (!hydrated) {
                   : null
               }
             />
+
+<section className="mb-8">
+  <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p className="text-[11px] font-semibold tracking-[0.28em] text-cyan-300/65">
+        MISSION PORTFOLIO
+      </p>
+
+      <h2 className="mt-3 text-3xl font-semibold tracking-tight">
+        Active execution
+      </h2>
+
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-white/38">
+        Mission health, operational friction, and recommended
+        action across the current portfolio.
+      </p>
+    </div>
+
+    <span className="text-xs text-white/30">
+      {missions.length} active{" "}
+      {missions.length === 1 ? "mission" : "missions"}
+    </span>
+  </div>
+
+  {missions.length > 0 ? (
+    <div className="mt-6 grid gap-5 xl:grid-cols-2">
+      {missions.map((item) => (
+        <MissionDashboardCard
+          key={item.id}
+          mission={item}
+        />
+      ))}
+    </div>
+  ) : (
+    <div className="mt-6 rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-8 text-center">
+      <p className="text-sm text-white/40">
+        No active missions. Build a mission below to begin
+        execution.
+      </p>
+    </div>
+  )}
+</section>
 
 <MissionInput
   mission={mission}
