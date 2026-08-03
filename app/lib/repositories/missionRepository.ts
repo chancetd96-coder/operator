@@ -1,7 +1,10 @@
 import type { Mission } from "@/lib/types/mission";
 import {
+  archiveMission,
+  completeMission,
   isArchiveExpired,
   isMissionArchived,
+  restoreMission,
 } from "@/lib/mission-lifecycle";
 const MISSIONS_STORAGE_KEY = "operator-missions";
 const ACTIVE_MISSION_STORAGE_KEY =
@@ -313,7 +316,77 @@ function updateMission(
 
   return updatedMission;
 }
+function completeMissionById(
+  id: string,
+): Mission | null {
+  const mission = getMission(id);
 
+  if (!mission) {
+    return null;
+  }
+
+  const completedMission = completeMission(
+    mission,
+  );
+
+  return saveMission(completedMission);
+}
+
+function archiveMissionById(
+  id: string,
+): Mission | null {
+  const mission = getMission(id);
+
+  if (!mission) {
+    return null;
+  }
+
+  const archivedMission = archiveMission(
+    mission,
+  );
+
+  const savedMission = saveMission(
+    archivedMission,
+  );
+
+  if (
+    isBrowser() &&
+    window.localStorage.getItem(
+      ACTIVE_MISSION_STORAGE_KEY,
+    ) === id
+  ) {
+    const nextMission = listMissions().find(
+      (current) => current.id !== id,
+    );
+
+    if (nextMission) {
+      window.localStorage.setItem(
+        ACTIVE_MISSION_STORAGE_KEY,
+        nextMission.id,
+      );
+    } else {
+      window.localStorage.removeItem(
+        ACTIVE_MISSION_STORAGE_KEY,
+      );
+    }
+  }
+
+  return savedMission;
+}
+
+function restoreMissionById(
+  id: string,
+): Mission | null {
+  const mission = getMission(id);
+
+  if (!mission) {
+    return null;
+  }
+
+  return saveMission(
+    restoreMission(mission),
+  );
+}
 function saveMission(mission: Mission): Mission {
   const missions = readMissions();
 
@@ -459,6 +532,9 @@ export const MissionRepository = {
   getMission,
   createMission,
   updateMission,
+  completeMission: completeMissionById,
+archiveMission: archiveMissionById,
+restoreMission: restoreMissionById,
   save: saveMission,
   deleteMission,
   getActiveMission,
