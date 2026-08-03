@@ -5,6 +5,7 @@ import OperatorLoopVisual from "@/components/site/OperatorLoopVisual";
 import OperatorHeroVisual from "@/components/site/OperatorHeroVisual";
 import OrganizationScale from "@/components/site/OrganizationScale";
 import OperatorCapabilities from "@/components/site/OperatorCapabilities";
+import BuiltForOperations from "@/components/operator/BuiltForOperations";
 import OperationalPictureVisual from "@/components/site/OperationalPictureVisual";
 import PublicHeader from "@/components/site/PublicHeader";
 
