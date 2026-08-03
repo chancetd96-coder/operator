@@ -1,9 +1,14 @@
 import Link from "next/link";
-
+import PublicHeader from "@/components/site/PublicHeader";
 export default function LandingPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-      <section className="mx-auto w-full max-w-5xl">
+  <PublicHeader />
+
+  <section
+  id="mission"
+  className="mx-auto w-full max-w-5xl"
+>
         <p className="text-xs font-semibold tracking-[0.32em] text-cyan-300/70">
           OPERATOR
         </p>
@@ -37,6 +42,9 @@ export default function LandingPage() {
           </a>
         </div>
       </section>
+      <div id="operator-loop" />
+<div id="capabilities" />
+<div id="roadmap" />
     </main>
   );
 }
