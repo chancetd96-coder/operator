@@ -1,4 +1,6 @@
 import Link from "next/link";
+
+import MissionControlPreview from "@/components/site/MissionControlPreview";
 import OperatorLoopVisual from "@/components/site/OperatorLoopVisual";
 import OperatorHeroVisual from "@/components/site/OperatorHeroVisual";
 import OperatorCapabilities from "@/components/site/OperatorCapabilities";
@@ -185,6 +187,50 @@ export default function LandingPage() {
 
     <div className="mt-14 sm:mt-20">
       <OperatorCapabilities />
+    </div>
+  </div>
+</section>
+<section
+  id="product"
+  className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
+>
+  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="absolute right-[-10rem] top-0 h-[38rem] w-[38rem] rounded-full bg-cyan-300/[0.025] blur-[140px]" />
+  </div>
+
+  <div className="relative mx-auto max-w-7xl">
+    <div className="grid gap-8 lg:grid-cols-[0.72fr_1fr] lg:items-end">
+      <div>
+        <p className="text-[11px] font-semibold tracking-[0.3em] text-cyan-300/60">
+          MISSION CONTROL
+        </p>
+
+        <h2 className="mt-6 text-4xl font-semibold leading-[0.98] tracking-[-0.04em] sm:text-6xl">
+          One operational picture.
+          <br />
+          One next action.
+        </h2>
+      </div>
+
+      <div className="max-w-2xl lg:justify-self-end">
+        <p className="text-base leading-8 text-white/45 sm:text-lg">
+          Every mission, decision, meeting, dependency,
+          risk, deadline, and task is synchronized into one
+          command environment.
+        </p>
+
+        <Link
+          href="/mission-control"
+          className="mt-7 inline-flex items-center gap-3 text-sm font-semibold text-cyan-200 transition hover:text-white"
+        >
+          Launch the live product
+          <span aria-hidden="true">→</span>
+        </Link>
+      </div>
+    </div>
+
+    <div className="mt-14 sm:mt-20">
+      <MissionControlPreview />
     </div>
   </div>
 </section>
