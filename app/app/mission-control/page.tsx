@@ -158,7 +158,6 @@ const criticalMissionCount =
   ).length;
 
 
-const activeMission = selectedMission;
 
 if (!hydrated) {
   return (
@@ -392,90 +391,7 @@ if (!hydrated) {
 
 
 
-            {activeMission && (
-
-              <div className="mt-10 space-y-6">
-
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-
-                  <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-
-                    <div>
-
-                      <p className="text-sm text-white/40">ACTIVE MISSION</p>
-
-                      <h3 className="mt-1 text-3xl font-semibold">
-
-                        {activeMission.title}
-
-                      </h3>
-
-                      <p className="mt-2 text-sm text-white/40">
-
-                        Owner: {activeMission.owner}
-
-                      </p>
-
-                    </div>
-
-
-
-                    <div className="rounded-xl border border-green-400/30 bg-green-400/10 px-4 py-3 text-green-300">
-
-                      {activeMission.progress}% Complete
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-
-
-                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-
-                <Panel
-                  title="Tasks"
-                  items={activeMission.tasks.map((task) => task.title)}
-                />
-
-                <Panel
-                  title="Schedule"
-                  items={activeMission.schedule}
-/>
-
-<Panel
-  title="Meetings"
-  items={activeMission.meetings.map((meeting) => meeting.title)}
-/>
-
-<Panel
-  title="Risks / Blockers"
-  items={activeMission.risks.map((risk) => risk.title)}
-/>
-                </div>
-
-
-
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-
-                  <h3 className="mb-4 text-2xl font-semibold">
-
-                    Operator Recommendation
-
-                  </h3>
-
-                  <pre className="whitespace-pre-wrap font-sans text-sm leading-7 text-white/80">
-
-                    {activeMission.recommendation}
-
-                  </pre>
-
-                </div>
-
-              </div>
-
-            )}
+            
 
           </div>
 
