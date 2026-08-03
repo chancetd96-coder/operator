@@ -24,3 +24,41 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+@keyframes operator-path-draw {
+  0% {
+    stroke-dashoffset: 1800;
+    opacity: 0.2;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.operator-path {
+  stroke-dasharray: 1800;
+  stroke-dashoffset: 1800;
+  animation: operator-path-draw 2.8s
+    cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.operator-path-node {
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .operator-path {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+
+  .operator-path-node {
+    display: none;
+  }
+}
