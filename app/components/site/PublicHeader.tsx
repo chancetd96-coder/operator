@@ -33,21 +33,33 @@ const navigationItems = [
 export default function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    if (!menuOpen) {
-      return;
+ useEffect(() => {
+  if (!menuOpen) {
+    return;
+  }
+
+  const previousOverflow =
+    document.body.style.overflow;
+
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Escape") {
+      setMenuOpen(false);
     }
+  }
 
-    const previousOverflow =
-      document.body.style.overflow;
+  document.body.style.overflow = "hidden";
+  window.addEventListener("keydown", handleKeyDown);
 
-    document.body.style.overflow = "hidden";
+  return () => {
+    document.body.style.overflow =
+      previousOverflow;
 
-    return () => {
-      document.body.style.overflow =
-        previousOverflow;
-    };
-  }, [menuOpen]);
+    window.removeEventListener(
+      "keydown",
+      handleKeyDown,
+    );
+  };
+}, [menuOpen]);
 
   return (
     <>
@@ -68,6 +80,7 @@ export default function PublicHeader() {
                 : "Open navigation"
             }
             aria-expanded={menuOpen}
+            aria-controls="public-navigation"
             onClick={() =>
               setMenuOpen((current) => !current)
             }
@@ -108,8 +121,9 @@ export default function PublicHeader() {
           className="absolute inset-0 bg-black/80 backdrop-blur-xl"
         />
 
-        <nav
-          aria-label="Public navigation"
+       <nav
+  id="public-navigation"
+  aria-label="Public navigation"
          className={`absolute inset-y-0 right-0 flex w-full max-w-xl flex-col overflow-y-auto border-l border-white/10 bg-[#050707] px-8 pb-10 pt-28 shadow-2xl transition-transform duration-500 sm:px-12 ${
   menuOpen
     ? "translate-x-0"

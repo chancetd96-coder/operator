@@ -82,3 +82,6 @@ html {
     transform: translateY(0);
   }
 }
+[id] {
+  scroll-margin-top: 6rem;
+}
