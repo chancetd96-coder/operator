@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import OperatorHeroVisual from "@/components/site/OperatorHeroVisual";
+import OperationalPictureVisual from "@/components/site/OperationalPictureVisual";
 import PublicHeader from "@/components/site/PublicHeader";
 
 export default function LandingPage() {
@@ -68,7 +69,46 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div id="operator-loop" />
+      <section
+  id="operator-loop"
+  className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
+>
+  <div className="pointer-events-none absolute inset-0">
+    <div className="absolute left-0 top-1/3 h-96 w-96 rounded-full bg-cyan-300/[0.025] blur-[110px]" />
+  </div>
+
+  <div className="relative mx-auto max-w-7xl">
+    <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+      <div className="max-w-xl">
+        <p className="text-[11px] font-semibold tracking-[0.3em] text-cyan-300/60">
+          THE EXECUTION GAP
+        </p>
+
+        <h2 className="mt-6 text-4xl font-semibold leading-[0.98] tracking-[-0.04em] sm:text-6xl">
+          Information is everywhere.
+          <br />
+          Execution is not.
+        </h2>
+
+        <p className="mt-7 text-base leading-8 text-white/45 sm:text-lg">
+          Missions are managed across email, calendars,
+          documents, spreadsheets, chats, and briefings.
+          Each system contains part of the truth. None of
+          them understands the operation as a whole.
+        </p>
+
+        <div className="mt-10 border-l border-cyan-300/30 pl-5">
+          <p className="text-lg leading-8 text-white/75">
+            Operator turns fragmented awareness into one
+            continuously updated operational picture.
+          </p>
+        </div>
+      </div>
+
+      <OperationalPictureVisual />
+    </div>
+  </div>
+</section>
       <div id="capabilities" />
       <div id="roadmap" />
     </main>
