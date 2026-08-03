@@ -302,6 +302,91 @@ export default function LandingPage() {
   </div>
 </section>
 
+<section
+  id="why-operator"
+  className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
+>
+  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="absolute right-[-12rem] top-1/3 h-[34rem] w-[34rem] rounded-full bg-cyan-300/[0.018] blur-[130px]" />
+  </div>
+
+  <div className="relative mx-auto max-w-7xl">
+    <div className="max-w-4xl">
+      <p className="text-[11px] font-semibold tracking-[0.3em] text-cyan-300/60">
+        WHY OPERATOR
+      </p>
+
+      <h2 className="mt-6 text-4xl font-semibold leading-[0.98] tracking-[-0.04em] sm:text-6xl">
+        Most software helps you manage work.
+        <br />
+        Operator helps you execute it.
+      </h2>
+    </div>
+
+    <div className="mt-14 overflow-hidden rounded-3xl border border-white/10 sm:mt-20">
+      <div className="grid grid-cols-2 border-b border-white/10 bg-white/[0.025]">
+        <div className="px-5 py-4 sm:px-7">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/30">
+            Traditional software
+          </p>
+        </div>
+
+        <div className="border-l border-white/10 bg-cyan-300/[0.025] px-5 py-4 sm:px-7">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300/65">
+            Operator
+          </p>
+        </div>
+      </div>
+
+      {[
+        ["Stores information", "Maintains execution"],
+        ["Shows dashboards", "Recommends action"],
+        ["Tracks tasks", "Synchronizes missions"],
+        ["Creates static plans", "Maintains a living operational picture"],
+        ["Reports progress", "Drives progress"],
+      ].map(([traditional, operator]) => (
+        <div
+          key={traditional}
+          className="grid grid-cols-2 border-b border-white/10 last:border-b-0"
+        >
+          <div className="flex min-h-24 items-center bg-white/[0.012] px-5 py-5 sm:px-7">
+            <p className="text-base leading-7 text-white/35 sm:text-lg">
+              {traditional}
+            </p>
+          </div>
+
+          <div className="flex min-h-24 items-center border-l border-white/10 bg-cyan-300/[0.018] px-5 py-5 sm:px-7">
+            <p className="text-base font-medium leading-7 text-white/82 sm:text-lg">
+              {operator}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div className="mt-20 grid gap-8 border-t border-cyan-300/20 pt-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+      <h3 className="text-4xl font-semibold leading-[0.98] tracking-[-0.04em] sm:text-6xl">
+        Execution never
+        <br />
+        stands still.
+      </h3>
+
+      <div className="max-w-2xl lg:justify-self-end">
+        <p className="text-base leading-8 text-white/48 sm:text-lg">
+          Operator continuously re-evaluates missions,
+          priorities, meetings, dependencies, risks, and
+          recommendations as new information arrives.
+        </p>
+
+        <p className="mt-6 text-sm leading-7 text-white/30">
+          The operational picture changes with reality—not at
+          the next status meeting.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div id="roadmap" />
     </main>
   );

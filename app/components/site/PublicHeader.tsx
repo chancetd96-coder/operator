@@ -28,6 +28,10 @@ const navigationItems = [
   label: "Scale",
   href: "#scale",
 },
+{
+  label: "Why Operator",
+  href: "#why-operator",
+},
   {
     label: "Roadmap",
     href: "#roadmap",
