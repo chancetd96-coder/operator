@@ -7,6 +7,7 @@ import OrganizationScale from "@/components/site/OrganizationScale";
 import WhyOperatorExists from "@/components/site/WhyOperatorExists";
 import HumanCommand from "@/components/site/HumanCommand";
 import LiveProductProof from "@/components/site/LiveProductProof";
+import Reveal from "@/components/site/Reveal";
 import OperationalExperience from "@/components/site/OperationalExperience";
 import BuiltForOperations from "@/components/operator/BuiltForOperations";
 import OperationalPictureVisual from "@/components/site/OperationalPictureVisual";
@@ -117,8 +118,12 @@ export default function LandingPage() {
     </div>
   </div>
 </section>
-<WhyOperatorExists />
-<HumanCommand />
+<Reveal delay={80}>
+  <WhyOperatorExists />
+</Reveal>
+<Reveal delay={140}>
+  <HumanCommand />
+</Reveal>
       <section
   id="operator-loop"
   className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
@@ -197,8 +202,12 @@ export default function LandingPage() {
     </div>
   </div>
 </section>
-<BuiltForOperations />
-<OperationalExperience />
+<Reveal>
+  <BuiltForOperations />
+</Reveal>
+<Reveal>
+  <OperationalExperience />
+</Reveal>
 <section
   id="product"
   className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
@@ -242,7 +251,9 @@ export default function LandingPage() {
       <MissionControlPreview />
     </div>
   </div>
+  <Reveal>
   <LiveProductProof />
+  </Reveal>
 </section>
       <section
   id="scale"
