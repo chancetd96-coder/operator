@@ -24,6 +24,10 @@ const navigationItems = [
   label: "Product",
   href: "#product",
 },
+{
+  label: "Scale",
+  href: "#scale",
+},
   {
     label: "Roadmap",
     href: "#roadmap",

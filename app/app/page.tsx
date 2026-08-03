@@ -3,6 +3,7 @@ import Link from "next/link";
 import MissionControlPreview from "@/components/site/MissionControlPreview";
 import OperatorLoopVisual from "@/components/site/OperatorLoopVisual";
 import OperatorHeroVisual from "@/components/site/OperatorHeroVisual";
+import OrganizationScale from "@/components/site/OrganizationScale";
 import OperatorCapabilities from "@/components/site/OperatorCapabilities";
 import OperationalPictureVisual from "@/components/site/OperationalPictureVisual";
 import PublicHeader from "@/components/site/PublicHeader";
@@ -234,7 +235,74 @@ export default function LandingPage() {
     </div>
   </div>
 </section>
-      <div id="roadmap" />
+      <section
+  id="scale"
+  className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
+>
+  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="absolute left-[-10rem] top-1/4 h-[34rem] w-[34rem] rounded-full bg-cyan-300/[0.02] blur-[130px]" />
+  </div>
+
+  <div className="relative mx-auto max-w-7xl">
+    <div className="grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-20">
+      <div>
+        <p className="text-[11px] font-semibold tracking-[0.3em] text-cyan-300/60">
+          DESIGNED TO SCALE
+        </p>
+
+        <h2 className="mt-6 text-4xl font-semibold leading-[0.98] tracking-[-0.04em] sm:text-6xl">
+          One operational picture
+          <br />
+          at every echelon.
+        </h2>
+
+        <p className="mt-7 max-w-xl text-base leading-8 text-white/45 sm:text-lg">
+          Operator begins as an execution system for an
+          individual mission owner. As organizations adopt it,
+          missions, risks, timelines, and decisions can roll
+          upward while each team retains ownership of execution.
+        </p>
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+          {[
+            {
+              title: "Mission ownership",
+              description:
+                "Execution stays with the team closest to the work.",
+            },
+            {
+              title: "Automatic roll-up",
+              description:
+                "Leadership receives the operational picture without rebuilding status manually.",
+            },
+            {
+              title: "Human command",
+              description:
+                "Operator recommends. People retain authority and decide.",
+            },
+          ].map((principle) => (
+            <article
+              key={principle.title}
+              className="rounded-2xl border border-white/10 bg-white/[0.025] p-5"
+            >
+              <h3 className="text-sm font-semibold text-white/80">
+                {principle.title}
+              </h3>
+
+              <p className="mt-3 text-sm leading-6 text-white/40">
+                {principle.description}
+              </p>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <OrganizationScale />
+    </div>
+  </div>
+</section>
+
+<div id="roadmap" />
     </main>
   );
 }
