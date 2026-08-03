@@ -44,6 +44,10 @@ const navigationItems = [
   label: "Why Operator",
   href: "#why-operator",
 },
+{
+  label: "Experience",
+  href: "#experience",
+},
   {
     label: "Roadmap",
     href: "#roadmap",
