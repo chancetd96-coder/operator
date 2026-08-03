@@ -1,6 +1,7 @@
 import Link from "next/link";
 import OperatorLoopVisual from "@/components/site/OperatorLoopVisual";
 import OperatorHeroVisual from "@/components/site/OperatorHeroVisual";
+import OperatorCapabilities from "@/components/site/OperatorCapabilities";
 import OperationalPictureVisual from "@/components/site/OperationalPictureVisual";
 import PublicHeader from "@/components/site/PublicHeader";
 
@@ -150,6 +151,40 @@ export default function LandingPage() {
       </div>
 
       <OperatorLoopVisual />
+    </div>
+  </div>
+</section>
+<section
+  id="capabilities"
+  className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
+>
+  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="absolute left-1/2 top-0 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full bg-cyan-300/[0.018] blur-[130px]" />
+  </div>
+
+  <div className="relative mx-auto max-w-7xl">
+    <div className="grid gap-8 lg:grid-cols-[0.65fr_1fr] lg:items-end">
+      <div>
+        <p className="text-[11px] font-semibold tracking-[0.3em] text-cyan-300/60">
+          OPERATIONAL CAPABILITIES
+        </p>
+
+        <h2 className="mt-6 text-4xl font-semibold leading-[0.98] tracking-[-0.04em] sm:text-6xl">
+          One system.
+          <br />
+          Six reinforcing capabilities.
+        </h2>
+      </div>
+
+      <p className="max-w-2xl text-base leading-8 text-white/45 sm:text-lg lg:justify-self-end">
+        Operator is designed as a connected operating system.
+        Each capability reduces cognitive load, strengthens
+        the operational picture, and improves execution.
+      </p>
+    </div>
+
+    <div className="mt-14 sm:mt-20">
+      <OperatorCapabilities />
     </div>
   </div>
 </section>
