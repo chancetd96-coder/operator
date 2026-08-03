@@ -202,6 +202,32 @@ useEffect(() => {
 
   }
 
+function handleCompleteMission(): void {
+  if (!mission) {
+    return;
+  }
+
+  const confirmed = window.confirm(
+    "Complete this mission? Operator will preserve the full execution record and remove it from active execution calculations.",
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const completedMission =
+    MissionRepository.completeMission(mission.id);
+
+  if (!completedMission) {
+    setSaveStatus("error");
+    return;
+  }
+
+  setMission(completedMission);
+  setSaveStatus("saved");
+  setLastSavedAt(new Date());
+}
+
   function updateTask(
     taskId: string,
     changes: Partial<MissionTask>,
@@ -406,6 +432,7 @@ useEffect(() => {
   mission={mission}
   saveStatus={saveStatus}
   lastSavedAt={lastSavedAt}
+  onCompleteMission={handleCompleteMission}
 />
 {activeTab === "commander" ? (
   <div className="mt-8">

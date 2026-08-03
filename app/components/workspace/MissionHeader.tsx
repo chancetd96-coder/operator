@@ -6,6 +6,7 @@ interface MissionHeaderProps {
   mission: Mission;
   saveStatus: "idle" | "saving" | "saved" | "error";
   lastSavedAt: Date | null;
+  onCompleteMission: () => void;
 }
 
 function formatSaveStatus(
@@ -40,6 +41,7 @@ export default function MissionHeader({
   mission,
   saveStatus,
   lastSavedAt,
+    onCompleteMission,
 }: MissionHeaderProps) {
   return (
     <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
@@ -107,6 +109,36 @@ export default function MissionHeader({
               {mission.executionScore ?? "--"}
             </span>
           </div>
+          {mission.status !== "complete" &&
+!mission.archivedAt ? (
+  <button
+    type="button"
+    onClick={onCompleteMission}
+    className="mt-5 w-full rounded-xl border border-emerald-300/25 bg-emerald-300/[0.07] px-4 py-3 text-sm font-semibold text-emerald-100 transition hover:border-emerald-300/45 hover:bg-emerald-300/[0.12]"
+  >
+    Complete Mission
+  </button>
+) : null}
+
+{mission.status === "complete" &&
+!mission.archivedAt ? (
+  <div className="mt-5 rounded-xl border border-emerald-300/20 bg-emerald-300/[0.05] px-4 py-3">
+    <p className="text-xs font-semibold tracking-[0.16em] text-emerald-200/80">
+      MISSION COMPLETE
+    </p>
+
+    {mission.completedAt ? (
+      <p className="mt-2 text-xs text-white/40">
+        Completed{" "}
+        {new Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }).format(new Date(mission.completedAt))}
+      </p>
+    ) : null}
+  </div>
+) : null}
         </div>
       </div>
     </section>
