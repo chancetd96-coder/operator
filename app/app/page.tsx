@@ -5,6 +5,7 @@ import OperatorLoopVisual from "@/components/site/OperatorLoopVisual";
 import OperatorHeroVisual from "@/components/site/OperatorHeroVisual";
 import OrganizationScale from "@/components/site/OrganizationScale";
 import WhyOperatorExists from "@/components/site/WhyOperatorExists";
+import HumanCommand from "@/components/site/HumanCommand";
 import BuiltForOperations from "@/components/operator/BuiltForOperations";
 import OperationalPictureVisual from "@/components/site/OperationalPictureVisual";
 import PublicHeader from "@/components/site/PublicHeader";
@@ -115,6 +116,7 @@ export default function LandingPage() {
   </div>
 </section>
 <WhyOperatorExists />
+<HumanCommand />
       <section
   id="operator-loop"
   className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"

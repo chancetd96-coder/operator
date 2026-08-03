@@ -16,6 +16,10 @@ const navigationItems = [
   label: "Why We Exist",
   href: "#why-we-exist",
 },
+{
+  label: "Human Command",
+  href: "#human-command",
+},
   {
     label: "Operator Loop",
     href: "#operator-loop",
