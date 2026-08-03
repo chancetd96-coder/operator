@@ -387,7 +387,107 @@ export default function LandingPage() {
   </div>
 </section>
 
-<div id="roadmap" />
+<section
+  id="roadmap"
+  className="relative border-t border-white/10 px-5 py-24 sm:px-8 sm:py-32 lg:px-12"
+>
+  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="absolute left-1/2 top-0 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full bg-cyan-300/[0.02] blur-[140px]" />
+  </div>
+
+  <div className="relative mx-auto max-w-7xl">
+
+    <div className="max-w-4xl">
+      <p className="text-[11px] font-semibold tracking-[0.3em] text-cyan-300/60">
+        PRODUCT VISION
+      </p>
+
+      <h2 className="mt-6 text-4xl font-semibold tracking-[-0.04em] leading-[0.98] sm:text-6xl">
+        Building the operating system
+        <br />
+        for execution.
+      </h2>
+
+      <p className="mt-7 max-w-2xl text-lg leading-8 text-white/45">
+        Operator is intentionally starting with execution.
+        As the platform matures, every new capability builds
+        on the same operational picture instead of creating
+        another disconnected workflow.
+      </p>
+    </div>
+
+    <div className="mt-20">
+
+      <div className="relative">
+
+        <div className="absolute left-0 right-0 top-7 h-px bg-gradient-to-r from-transparent via-cyan-300/40 to-transparent" />
+
+        <div className="grid gap-10 lg:grid-cols-5">
+
+          {[
+            {
+              title: "Mission Control",
+              status: "Today",
+              body:
+                "Execution, priorities, risks, meetings and timelines.",
+            },
+            {
+              title: "Collaborative Teams",
+              status: "Next",
+              body:
+                "Shared workspaces with synchronized execution.",
+            },
+            {
+              title: "Command Roll-up",
+              status: "Future",
+              body:
+                "Operational awareness across organizations.",
+            },
+            {
+              title: "AI Coordination",
+              status: "Future",
+              body:
+                "Continuous recommendations as missions evolve.",
+            },
+            {
+              title: "Enterprise Operations",
+              status: "Vision",
+              body:
+                "A common operating picture spanning entire organizations.",
+            },
+          ].map((step) => (
+            <article
+              key={step.title}
+              className="relative"
+            >
+              <div className="mb-5 flex justify-center lg:justify-start">
+                <div className="h-4 w-4 rounded-full border border-cyan-300/50 bg-[#050707] shadow-[0_0_18px_rgba(103,232,249,.35)]">
+                  <div className="m-[3px] h-2 w-2 rounded-full bg-cyan-200" />
+                </div>
+              </div>
+
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300/55">
+                {step.status}
+              </p>
+
+              <h3 className="mt-3 text-xl font-semibold">
+                {step.title}
+              </h3>
+
+              <p className="mt-4 text-sm leading-7 text-white/40">
+                {step.body}
+              </p>
+            </article>
+          ))}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
     </main>
   );
 }
