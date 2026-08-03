@@ -9,47 +9,23 @@ const navigationItems = [
     href: "#mission",
   },
   {
-  label: "Execution Gap",
-  href: "#execution-gap",
-},
-{
-  label: "Why We Exist",
-  href: "#why-we-exist",
-},
-{
-  label: "Human Command",
-  href: "#human-command",
-},
+    label: "Why Operator",
+    href: "#why-we-exist",
+  },
   {
-    label: "Operator Loop",
+    label: "How It Works",
     href: "#operator-loop",
   },
   {
-    label: "Capabilities",
-    href: "#capabilities",
+    label: "Product",
+    href: "#product",
   },
   {
-  label: "Product",
-  href: "#product",
-},
-{
-  label: "Live Product",
-  href: "#product-proof",
-},
-{
-  label: "Scale",
-  href: "#scale",
-},
-{
-  label: "Why Operator",
-  href: "#why-operator",
-},
-{
-  label: "Experience",
-  href: "#experience",
-},
+    label: "Scale",
+    href: "#scale",
+  },
   {
-    label: "Roadmap",
+    label: "Vision",
     href: "#roadmap",
   },
 ];
@@ -134,11 +110,11 @@ export default function PublicHeader() {
 
         <nav
           aria-label="Public navigation"
-          className={`absolute inset-y-0 right-0 flex w-full max-w-xl flex-col border-l border-white/10 bg-[#050707] px-8 pb-10 pt-28 shadow-2xl transition-transform duration-500 sm:px-12 ${
-            menuOpen
-              ? "translate-x-0"
-              : "translate-x-full"
-          }`}
+         className={`absolute inset-y-0 right-0 flex w-full max-w-xl flex-col overflow-y-auto border-l border-white/10 bg-[#050707] px-8 pb-10 pt-28 shadow-2xl transition-transform duration-500 sm:px-12 ${
+  menuOpen
+    ? "translate-x-0"
+    : "translate-x-full"
+}`}
         >
           <p className="text-[11px] font-semibold tracking-[0.28em] text-cyan-300/65">
             NAVIGATION
