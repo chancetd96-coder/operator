@@ -1,5 +1,8 @@
 import type { Mission } from "@/lib/types/mission";
-
+import {
+  isArchiveExpired,
+  isMissionArchived,
+} from "@/lib/mission-lifecycle";
 const MISSIONS_STORAGE_KEY = "operator-missions";
 const ACTIVE_MISSION_STORAGE_KEY =
   "operator-active-mission-id";
@@ -155,12 +158,12 @@ function normalizeMission(
     meetings: Array.isArray(mission.meetings)
       ? mission.meetings
       : [],
-   createdAt: mission.createdAt ?? now,
-updatedAt: mission.updatedAt ?? now,
-startedAt: mission.startedAt,
-completedAt: mission.completedAt,
-archivedAt: mission.archivedAt,
-archiveExpiresAt: mission.archiveExpiresAt,
+    createdAt: mission.createdAt ?? now,
+    updatedAt: mission.updatedAt ?? now,
+    startedAt: mission.startedAt,
+    completedAt: mission.completedAt,
+    archivedAt: mission.archivedAt,
+    archiveExpiresAt: mission.archiveExpiresAt,
   };
 }
 
@@ -188,9 +191,15 @@ function readMissions(): Mission[] {
       normalizeMission(mission as Partial<Mission>),
     );
 
-    writeMissions(missions);
+    const retainedMissions = missions.filter(
+      (mission) => !isArchiveExpired(mission),
+    );
 
-    return missions;
+    if (retainedMissions.length !== missions.length) {
+      writeMissions(retainedMissions);
+    }
+
+    return retainedMissions;
   } catch {
     return seedDefaultMission();
   }
@@ -218,11 +227,29 @@ function listMissions(): Mission[] {
     Low: 4,
   };
 
-  return [...readMissions()].sort(
-    (a, b) =>
-      priorityRank[a.priority] -
-      priorityRank[b.priority],
-  );
+  return readMissions()
+    .filter((mission) => !isMissionArchived(mission))
+    .sort(
+      (a, b) =>
+        priorityRank[a.priority] -
+        priorityRank[b.priority],
+    );
+}
+
+function getArchivedMissions(): Mission[] {
+  return readMissions()
+    .filter(isMissionArchived)
+    .sort((a, b) => {
+      const archivedAtA = a.archivedAt
+        ? new Date(a.archivedAt).getTime()
+        : 0;
+
+      const archivedAtB = b.archivedAt
+        ? new Date(b.archivedAt).getTime()
+        : 0;
+
+      return archivedAtB - archivedAtA;
+    });
 }
 
 function getMission(id: string): Mission | null {
@@ -335,7 +362,9 @@ function deleteMission(id: string): boolean {
       ACTIVE_MISSION_STORAGE_KEY,
     ) === id
   ) {
-    const nextMission = remaining[0];
+    const nextMission = remaining.find(
+      (mission) => !isMissionArchived(mission),
+    );
 
     if (nextMission) {
       window.localStorage.setItem(
@@ -353,7 +382,9 @@ function deleteMission(id: string): boolean {
 }
 
 function getActiveMission(): Mission | null {
-  const missions = readMissions();
+  const missions = readMissions().filter(
+    (mission) => !isMissionArchived(mission),
+  );
 
   if (!isBrowser()) {
     return (
@@ -390,17 +421,23 @@ function getActiveMission(): Mission | null {
       ACTIVE_MISSION_STORAGE_KEY,
       activeMission.id,
     );
+  } else {
+    window.localStorage.removeItem(
+      ACTIVE_MISSION_STORAGE_KEY,
+    );
   }
 
   return activeMission;
 }
+
+
 
 function setActiveMission(
   id: string,
 ): Mission | null {
   const mission = getMission(id);
 
-  if (!mission) {
+  if (!mission || isMissionArchived(mission)) {
     return null;
   }
 
@@ -414,8 +451,11 @@ function setActiveMission(
   return mission;
 }
 
+
+
 export const MissionRepository = {
   listMissions,
+  getArchivedMissions,
   getMission,
   createMission,
   updateMission,
@@ -426,5 +466,6 @@ export const MissionRepository = {
 
   // Compatibility aliases used by existing pages.
   getAll: listMissions,
+  getArchived: getArchivedMissions,
   getById: getMission,
 };
