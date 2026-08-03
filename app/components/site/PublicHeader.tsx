@@ -172,7 +172,7 @@ export default function PublicHeader() {
               href="mailto:contact@mortaise.ai?subject=Operator%20Briefing"
               className="mt-4 block text-sm text-white/40 transition hover:text-white/70"
             >
-              Request a briefing
+              Request an Operator briefing
             </a>
           </div>
         </nav>
