@@ -293,47 +293,96 @@ if (!hydrated) {
       : "border-white/10 bg-white/[0.035] hover:-translate-y-0.5 hover:border-cyan-300/20 hover:bg-white/[0.07]"
   }`}
 >
-  <div
-    className={`pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-cyan-300 transition-opacity ${
-      selectedMission?.id === item.id
-        ? "opacity-80"
-        : "opacity-0 group-hover:opacity-40"
-    }`}
-  />
+ <div
+  className={`pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-cyan-300 transition-opacity ${
+    selectedMission?.id === item.id
+      ? "opacity-80"
+      : "opacity-0 group-hover:opacity-40"
+  }`}
+/>
 
-  <div className="flex items-start justify-between gap-3">
-    <div className="min-w-0">
-      <p className="truncate text-sm font-semibold text-white/90 transition-colors group-hover:text-cyan-100">
-        {item.title}
-      </p>
+<div className="flex items-start justify-between gap-3">
+  <div className="min-w-0">
+    <p className="truncate text-sm font-semibold text-white/90 transition-colors group-hover:text-cyan-100">
+      {item.title}
+    </p>
 
-      <div className="mt-2 flex flex-wrap items-center gap-2">
-        <span className="rounded-full border border-white/10 bg-black/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/45">
-          {item.status}
-        </span>
+    <div className="mt-2 flex flex-wrap items-center gap-2">
+      <span className="rounded-full border border-white/10 bg-black/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/45">
+        {item.status}
+      </span>
 
-        <span className="text-[11px] font-medium text-white/35">
-          {item.priority ?? "Normal"} priority
-        </span>
-      </div>
+      <span className="text-[11px] font-medium text-white/35">
+        {item.priority ?? "Normal"} priority
+      </span>
     </div>
+  </div>
+</div>
 
-    <span className="shrink-0 text-sm font-semibold tabular-nums text-white/65">
-      {item.progress}%
-    </span>
+<div className="mt-4 grid grid-cols-3 gap-2">
+  <div className="rounded-lg border border-white/10 bg-black/20 px-2 py-2 text-center">
+    <p className="text-sm font-semibold text-white/75">
+      {item.tasks.length}
+    </p>
+    <p className="mt-1 text-[9px] uppercase tracking-[0.12em] text-white/25">
+      Tasks
+    </p>
   </div>
 
-  <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/10">
-    <div
-      className="h-full rounded-full bg-cyan-300/70 transition-all duration-300"
-      style={{
-        width: `${Math.min(
-          100,
-          Math.max(0, item.progress),
-        )}%`,
-      }}
-    />
+  <div className="rounded-lg border border-white/10 bg-black/20 px-2 py-2 text-center">
+    <p className="text-sm font-semibold text-white/75">
+      {
+        item.risks.filter(
+          (risk) => !risk.resolved,
+        ).length
+      }
+    </p>
+    <p className="mt-1 text-[9px] uppercase tracking-[0.12em] text-white/25">
+      Risks
+    </p>
   </div>
+
+  <div className="rounded-lg border border-white/10 bg-black/20 px-2 py-2 text-center">
+    <p className="text-sm font-semibold text-white/75">
+      {item.meetings.length}
+    </p>
+    <p className="mt-1 text-[9px] uppercase tracking-[0.12em] text-white/25">
+      Meetings
+    </p>
+  </div>
+</div>
+
+<div className="mt-4 flex items-center justify-between text-xs">
+  <span className="text-white/40">
+    Execution
+  </span>
+
+  <span className="font-semibold tabular-nums text-white/70">
+    {item.progress}%
+  </span>
+</div>
+
+<div className="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
+  <div
+    className="h-full rounded-full bg-cyan-300/70 transition-all duration-300"
+    style={{
+      width: `${Math.min(
+        100,
+        Math.max(0, item.progress),
+      )}%`,
+    }}
+  />
+</div>
+
+<div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-[11px] text-white/35">
+  <span className="truncate">
+    {item.owner || "Unassigned"}
+  </span>
+
+  <span className="shrink-0 text-cyan-100/50">
+    Open →
+  </span>
+</div>
 </button>
 
             ))}
